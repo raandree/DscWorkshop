@@ -9,7 +9,7 @@ task CompileDatumRsop {
         $rsopOutputPath = Join-Path -Path $BuildOutput -ChildPath $rsopFolder
     }
     else {
-        $RsopOutputPath = $rsopFolder
+        $rsopOutputPath = $rsopFolder
     }
 
     if (-not (Test-Path -Path $rsopOutputPath)) {
@@ -26,7 +26,8 @@ task CompileDatumRsop {
         $configurationData.AllNodes |
         Where-Object Name -ne * |
         ForEach-Object {
-            $nodeRSOP = Get-DatumRsop -Datum $datum -AllNodes ([ordered]@{ } + $_)
+            Write-Build Green "`t for node $($_.Name)."
+            $nodeRSOP = Get-DatumRsop -Datum $datum -AllNodes ([ordered]@{ } + $_) -IncludeSource
             $nodeRSOP | ConvertTo-Json -Depth 40 | ConvertFrom-Json | Convertto-Yaml -OutFile (Join-Path -Path $rsopOutputPathVersion -ChildPath "$($_.Name).yml") -Force
         }
     }

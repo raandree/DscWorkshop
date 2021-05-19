@@ -1,4 +1,11 @@
+!DSC/BuildOutput/
+
 DSC/BuildOutput/*
+!DSC/BuildOutput/Modules/
+
+DSC/BuildOutput/Modules/*
+!DSC/BuildOutput/Modules/datum
+!DSC/BuildOutput/Modules/Datum.InvokeCommand
 
 DSC/DscConfigurations/*
 DSC/DscResources/*

@@ -11,7 +11,10 @@ if (-not $environment ){
     $environment = 'NA'
 }
 
-configuration "RootConfiguration"
+$m = Get-Module -Name Datum
+$rsopCache = & $m { $rsopcache }
+
+configuration RootConfiguration
 {
     Import-DscResource -ModuleName PSDesiredStateConfiguration
     Import-DscResource -ModuleName CommonTasks
@@ -28,16 +31,16 @@ configuration "RootConfiguration"
     node $ConfigurationData.AllNodes.NodeName {
         Write-Host "`r`n$('-'*75)`r`n$($Node.Name) : $($Node.NodeName) : $(&$module { $Script:PSTopConfigurationName })" -ForegroundColor Yellow
         
-        $configurationNames = Resolve-NodeProperty -PropertyPath 'Configurations'
+        $configurationNames = $rsopCache."$($Node.Name)".Configurations
         $global:node = $node #this makes the node variable being propagated into the configurations
 
         foreach ($configurationName in $configurationNames) {
             Write-Debug "`tLooking up params for $configurationName"
-            $properties = Resolve-NodeProperty -PropertyPath $configurationName -DefaultValue @{}
-
             $dscError = [System.Collections.ArrayList]::new()
+
+            $clonedProperties = $rsopCache."$($Node.Name)".$configurationName
             
-            (Get-DscSplattedResource -ResourceName $configurationName -ExecutionName $configurationName -Properties $properties -NoInvoke).Invoke($properties)
+            (Get-DscSplattedResource -ResourceName $configurationName -ExecutionName $configurationName -Properties $clonedProperties -NoInvoke).Invoke($clonedProperties)
             
             if($Error[0] -and $lastError -ne $Error[0]) {
                 $lastIndex = [Math]::Max(($Error.LastIndexOf($lastError) -1), -1)
@@ -74,11 +77,10 @@ configuration "RootConfiguration"
 }
 
 $cd = @{}
-$cd.Datum = $ConfigurationData.Datum
 
-foreach ($node in $configurationData.AllNodes)
+foreach ($node in $rsopCache.GetEnumerator())
 {
-    $cd.AllNodes = @($ConfigurationData.AllNodes | Where-Object NodeName -eq $node.NodeName)
+    $cd.AllNodes = @([hashtable]$node.Value)
     try
     {
         RootConfiguration -ConfigurationData $cd -OutputPath (Join-Path -Path $BuildOutput -ChildPath MOF)
