@@ -2,22 +2,10 @@ NodeName: '[x={ $Node.Name }=]'
 Environment: '[x={ $File.Directory.BaseName } =]'
 Role: FileServer
 Description: '[x= "$($Node.Role) in $($Node.Environment)" =]'
-Location: Frankfurt
-Baseline: Server
 
 ComputerSettings:
   Name: '[x={ $Node.NodeName }=]'
   Description: '[x= "$($Node.Role) in $($Node.Environment)" =]'
-
-NetworkIpConfiguration:
-  Interfaces:
-    - InterfaceAlias: DscWorkshop 0
-      IpAddress: 192.168.111.100
-      Prefix: 24
-      Gateway: 192.168.111.50
-      DnsServer:
-        - 192.168.111.10
-      DisableNetbios: true
 
 PSDscAllowPlainTextPassword: True
 PSDscAllowDomainUser: True
@@ -32,6 +20,12 @@ DscTagging:
     - '[x={ Get-DatumSourceFile -Path $File } =]'
 
 FilesAndFolders:
-  Items:
+  xxItems:
     - DestinationPath: Z:\DoesNotWork
       Type: Directory
+    - DestinationPath: xxC:\Test
+      Type: Directory
+
+WindowsFeatures:
+  Names:
+  - xxFile-Services

@@ -1,10 +1,12 @@
 Configurations:
-  - FilesAndFolders
-  - RegistryValues
+  #- FilesAndFolders
+  #- RegistryValues
+  - WindowsFeatures
 
 WindowsFeatures:
   Names:
     - File-Services
+    - XPS-Viewer
 
 FilesAndFolders:
   Items:
