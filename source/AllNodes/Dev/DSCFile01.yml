@@ -28,5 +28,5 @@ FilesAndFolders:
 
 WindowsFeatures:
   Names:
-  - xxFile-Services
-  - xxv1
+  - --File-Services
+  - --v1

@@ -6,7 +6,7 @@ Configurations:
 WindowsFeatures:
   Names:
     - File-Services
-    - XPS-Viewer
+    - --XPS-Viewer
     - v1
     - v2
 
