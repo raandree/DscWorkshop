@@ -26,6 +26,12 @@ BuildWorkflow:
     - CompileRootConfiguration
     - CompileRootMetaMof
 
+  rsop:
+    - Init
+    - Clean
+    - LoadDatumConfigData
+    - CompileDatumRsop
+
   pack:
     - Init
     - LoadDatumConfigData
