@@ -31,6 +31,7 @@ lookup_options:
   WindowsFeatures\Names:
     merge_basetype_array: Unique
     merge_options:
+      knockout_value_prefix: xx
       knockout_prefix: xx
 
   FilesAndFolders:
