@@ -1,7 +1,9 @@
 Configurations:
-  #- FilesAndFolders
+  - FilesAndFolders
   #- RegistryValues
   - WindowsFeatures
+  - SomeValues
+  - HashTables
 
 WindowsFeatures:
   Names:
@@ -9,6 +11,12 @@ WindowsFeatures:
     - --XPS-Viewer
     - v1
     - v2
+
+SomeValues:
+  Values:
+    - v1
+    - v2
+    - v3
 
 FilesAndFolders:
   Items:
@@ -43,3 +51,13 @@ SecurityBaseline:
 DscTagging:
   Layers:
     - '[x={ Get-DatumSourceFile -Path $File } =]'
+
+
+HashTables:
+  Items:
+    - Key1: h3
+      Key2: 3
+    - Key1: h4
+      Key2: 4
+    - Key1: h5
+      Key2: 5

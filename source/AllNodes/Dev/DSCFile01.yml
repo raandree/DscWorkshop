@@ -20,13 +20,29 @@ DscTagging:
     - '[x={ Get-DatumSourceFile -Path $File } =]'
 
 FilesAndFolders:
-  xxItems:
+  Items:
     - DestinationPath: Z:\DoesNotWork
       Type: Directory
-    - DestinationPath: xxC:\Test
+    - DestinationPath: --C:\Test
       Type: Directory
+
+HashTables:
+  Items:
+    - Key1: h1
+      Key2: 1
+    - Key1: h2
+      Key2: 2
+    - Key1: h3
+      Key2: 3
 
 WindowsFeatures:
   Names:
-  - --File-Services
-  - --v1
+    - --File-Services
+    - --v1
+    - v3
+
+SomeValues:
+  Values:
+    - v3
+    - v4
+    - --v5

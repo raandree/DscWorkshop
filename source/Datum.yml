@@ -27,9 +27,16 @@ lookup_options:
 
   WindowsFeatures:
     merge_hash: deep
-
   WindowsFeatures\Names:
     merge_basetype_array: Unique
+    merge_options:
+      knockout_value_prefix: --
+      knockout_prefix: --
+
+  SomeValues:
+    merge_hash: deep
+  SomeValues\Values:
+    merge_basetype_array: Add
     merge_options:
       knockout_value_prefix: --
       knockout_prefix: --
@@ -41,7 +48,16 @@ lookup_options:
     merge_options:
       tuple_keys:
         - DestinationPath
-      knockout_prefix: xx
+      knockout_prefix: --
+
+  HashTables:
+    merge_hash: deep
+  HashTables\Items:
+    merge_hash_array: UniqueKeyValTuples
+    merge_options:
+      tuple_keys:
+        - Key1
+      knockout_prefix: --
 
   LcmConfig:
     merge_hash: deep
