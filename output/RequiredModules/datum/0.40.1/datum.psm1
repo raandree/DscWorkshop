@@ -1539,7 +1539,7 @@ function Merge-Datum
                         $values = $ReferenceDatum + $DifferenceDatum
                         $knockoutValues = foreach ($value in $values)
                         {
-                            $valueRegPattern = "$regexPattern(?<Value>$($value -replace $strategy.merge_options.knockout_prefix, ''))"
+                            $valueRegPattern = "$regexPattern(?<Value>$([regex]::Escape(($value -replace $strategy.merge_options.knockout_prefix, ''))))"
                             if ($value -match $valueRegPattern)
                             {
                                 $Matches.Value
@@ -1551,7 +1551,7 @@ function Merge-Datum
                     }
                     else
                     {
-                        $result = @(($ReferenceDatum + $DifferenceDatum) | Select-Object -Unique)
+                        $result = @($ReferenceDatum + $DifferenceDatum | Select-Object -Unique)
                         , $result
                     }
 
@@ -1562,12 +1562,24 @@ function Merge-Datum
                     #--> $ref + $diff -$kop
                     if ($regexPattern = $strategy.merge_options.knockout_prefix)
                     {
-                        $regexPattern = $regexPattern.insert(0, '^')
-                        , (($ReferenceDatum + $DifferenceDatum).Where{ $_ -notMatch $regexPattern })
+                        $regexPattern = $regexPattern.Insert(0, '^')
+                        $values = $ReferenceDatum + $DifferenceDatum
+                        $knockoutValues = foreach ($value in $values)
+                        {
+                            $valueRegPattern = "$regexPattern(?<Value>$([regex]::Escape(($value -replace $strategy.merge_options.knockout_prefix, ''))))"
+                            if ($value -match $valueRegPattern)
+                            {
+                                $Matches.Value
+                                $value
+                            }
+                        }
+                        $result = @(($ReferenceDatum + $DifferenceDatum).Where{ $_ -notin $knockoutValues })
+                        , $result
                     }
                     else
                     {
-                        , ($ReferenceDatum + $DifferenceDatum)
+                        $result = @($ReferenceDatum + $DifferenceDatum)
+                        , $result
                     }
                 }
 
@@ -1580,7 +1592,7 @@ function Merge-Datum
 
         'hash_array'
         {
-            $MergeDatumArrayParams = @{
+            $mergeDatumArrayParams = @{
                 ReferenceArray  = $ReferenceDatum
                 DifferenceArray = $DifferenceDatum
                 Strategy        = $strategy
@@ -1598,7 +1610,29 @@ function Merge-Datum
                 '^UniqueKeyValTuples'
                 {
                     #--> $ref + $diff | ? % key in Tuple_Keys -> $ref[Key] -eq $diff[key] is not already int output
-                    , (Merge-DatumArray @MergeDatumArrayParams)
+                    if ($regexPattern = $strategy.merge_options.knockout_prefix)
+                    {
+                        $regexPattern = $regexPattern.Insert(0, '^')
+                        $values = Merge-DatumArray @MergeDatumArrayParams
+                        $knockoutKeys = foreach ($value in $values)
+                        {
+                            $primaryKey = $value.$($strategy.merge_options.tuple_keys[0])
+                            $valueRegPattern = "$regexPattern(?<PrimaryKey>$([regex]::Escape(($primaryKey -replace $strategy.merge_options.knockout_prefix, ''))))"
+                            if ($primaryKey -match $valueRegPattern)
+                            {
+                                $Matches.PrimaryKey
+                                $value.$($strategy.merge_options.tuple_keys[0])
+                            }
+                        }
+                        $result = @(($ReferenceDatum + $DifferenceDatum).Where{ $_.$($strategy.merge_options.tuple_keys[0]) -notin $knockoutKeys })
+                        , $result
+                    }
+                    else
+                    {
+                        $result = Merge-DatumArray @MergeDatumArrayParams
+                        , $result
+                    }
+
                 }
 
                 '^DeepTuple|^DeepItemMergeByTuples'
