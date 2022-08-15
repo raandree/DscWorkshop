@@ -1624,12 +1624,13 @@ function Merge-Datum
                                 $value.$($strategy.merge_options.tuple_keys[0])
                             }
                         }
-                        $result = @(($ReferenceDatum + $DifferenceDatum).Where{ $_.$($strategy.merge_options.tuple_keys[0]) -notin $knockoutKeys })
+                        $result = Merge-DatumArray @mergeDatumArrayParams
+                        $result = $result.Where{ $_.$($strategy.merge_options.tuple_keys[0]) -notin $knockoutKeys }
                         , $result
                     }
                     else
                     {
-                        $result = Merge-DatumArray @MergeDatumArrayParams
+                        $result = Merge-DatumArray @mergeDatumArrayParams
                         , $result
                     }
 
@@ -1644,10 +1645,8 @@ function Merge-Datum
                 '^Sum'
                 {
                     #--> $ref + $diff
-                    (@($DifferenceArray) + @($ReferenceArray)).Foreach{
-                        $null = $MergedArray.Add(([ordered]@{} + $_))
-                    }
-                    , $MergedArray
+                    $result = @($DifferenceDatum) + @($ReferenceDatum)
+                    , $result
                 }
 
                 Default
