@@ -34,6 +34,7 @@ HashTables:
       Key2: 2
     - Key1: h3
       Key2: 3
+      Key3: v3
 
 WindowsFeatures:
   Names:
@@ -42,7 +43,7 @@ WindowsFeatures:
     - v3
 
 SomeValues:
-  Values:
+  --Values:
     - v3
-    - v4
-    - --v5
+    #- v4
+    #- --v5

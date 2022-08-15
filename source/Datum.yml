@@ -36,7 +36,7 @@ lookup_options:
   SomeValues:
     merge_hash: deep
   SomeValues\Values:
-    merge_basetype_array: Add
+    merge_basetype_array: Unique
     merge_options:
       knockout_value_prefix: --
       knockout_prefix: --
@@ -57,6 +57,7 @@ lookup_options:
     merge_options:
       tuple_keys:
         - Key1
+        - Key2
       knockout_prefix: --
 
   LcmConfig:
