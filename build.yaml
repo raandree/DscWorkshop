@@ -23,6 +23,7 @@ BuildWorkflow:
     - TestConfigData
     - CompileDatumRsop
     - TestDscResources
+    - Set_PSModulePath
     - CompileRootConfiguration
     - CompileRootMetaMof
 
@@ -101,3 +102,13 @@ Sampler.DscPipeline:
   - DscConfig.Demo
   #- Name: CommonTasks
   #  Version: 0.3.259
+
+####################################################
+#           Setting Sampler PSModulePath           #
+####################################################
+SetPSModulePath:
+  #PSModulePath: C:\Users\Install\OneDrive\Documents\WindowsPowerShell\Modules;C:\Program Files\WindowsPowerShell\Modules;C:\Windows\system32\WindowsPowerShell\v1.0\Modules;c:\Users\Install\.vscode\extensions\ms-vscode.powershell-2022.5.1\modules;
+  RemovePersonal: true
+  RemoveProgramFiles: true
+  RemoveWindows: false
+  SetSystemDefault: false
