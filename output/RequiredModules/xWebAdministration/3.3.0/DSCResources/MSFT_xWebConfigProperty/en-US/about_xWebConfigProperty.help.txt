@@ -1,0 +1,101 @@
+.NAME
+    xWebConfigProperty
+
+.DESCRIPTION
+    The xWebConfigProperty DSC resource is used to ensure the value of an
+    identified property in the web.config file.
+
+    ## Requirements
+
+    * Target machine must be running Windows Server 2012 R2 or later.
+
+    ## Known issues
+
+    All issues are not listed here, see https://github.com/dsccommunity/xWebAdministration/issues?q=is%3Aissue+is%3Aopen+in%3Atitle+xWebConfigProperty.
+
+.PARAMETER WebsitePath
+    Key - String
+    Path to website location (IIS or WebAdministration format).
+
+.PARAMETER Filter
+    Key - String
+    Filter used to locate property to update.
+
+.PARAMETER PropertyName
+    Key - String
+    Name of the property to update.
+
+.PARAMETER Ensure
+    Write - String
+    Allowed values: Present, Absent
+    Indicates if the property and value should be present or absent. Defaults to Present.
+
+.PARAMETER Value
+    Write - String
+    Value of the property to update.
+
+.EXAMPLE 1
+
+Disables directory browsing in the default website.
+
+This example shows how to use the xWebConfigProperty DSC resource for setting a configuration property.
+It will set the value of the system.webServer/directoryBrowse enabled attribute to false in the Web.config file for the default website.
+
+Configuration Sample_xWebConfigProperty_Add
+{
+    param
+    (
+        # Target nodes to apply the configuration.
+        [Parameter()]
+        [String[]]
+        $NodeName = 'localhost'
+    )
+
+    # Import the modules that define custom resources
+    Import-DscResource -ModuleName xWebAdministration
+
+    Node $NodeName
+    {
+        xWebConfigProperty "$($NodeName) - Ensure 'directory browsing' is set to disabled - Add"
+        {
+            WebsitePath  = 'IIS:\Sites\Default Web Site'
+            Filter       = 'system.webServer/directoryBrowse'
+            PropertyName = 'enabled'
+            Value        = 'false'
+            Ensure       = 'Present'
+        }
+    }
+}
+
+.EXAMPLE 2
+
+Removes configuration of directory browsing in the default website.
+
+This example shows how to use the xWebConfigProperty DSC resource for removing a configuration property.
+It will remove the system.webServer/directoryBrowse enabled attribute (if present) in the Web.config file for the default website.
+
+Configuration Sample_xWebConfigProperty_Remove
+{
+    param
+    (
+        # Target nodes to apply the configuration.
+        [Parameter()]
+        [String[]]
+        $NodeName = 'localhost'
+    )
+
+    # Import the modules that define custom resources
+    Import-DscResource -ModuleName xWebAdministration
+
+    Node $NodeName
+    {
+        xWebConfigProperty "$($NodeName) - Ensure 'directory browsing' is set to disabled - Remove"
+        {
+            WebsitePath  = 'IIS:\Sites\Default Web Site'
+            Filter       = 'system.webServer/directoryBrowse'
+            PropertyName = 'enabled'
+            Ensure       = 'Absent'
+        }
+    }
+}
+

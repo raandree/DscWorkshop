@@ -1,0 +1,300 @@
+.NAME
+    xWebAppPool
+
+.DESCRIPTION
+    The xWebAppPool DSC resource is used to...
+
+    ## Requirements
+
+    * Target machine must be running Windows Server 2012 R2 or later.
+
+    ## Known issues
+
+    All issues are not listed here, see https://github.com/dsccommunity/xWebAdministration/issues?q=is%3Aissue+is%3Aopen+in%3Atitle+xWebAppPool.
+
+.PARAMETER Name
+    Key - String
+    Indicates the application pool name. The value must contain between 1 and 64 characters.
+
+.PARAMETER Ensure
+    Write - String
+    Allowed values: Present, Absent
+    Indicates if the application pool exists. Set this property to Absent to ensure that the application pool does not exist. Setting it to Present (the default value) ensures that the application pool exists.
+
+.PARAMETER State
+    Write - String
+    Allowed values: Started, Stopped
+    Indicates the state of the application pool. The values that are allowed for this property are: Started, Stopped.
+
+.PARAMETER autoStart
+    Write - Boolean
+    When set to true, indicates to the World Wide Web Publishing Service (W3SVC) that the application pool should be automatically started when it is created or when IIS is started.
+
+.PARAMETER CLRConfigFile
+    Write - String
+    Indicates the .NET configuration file for the application pool.
+
+.PARAMETER enable32BitAppOnWin64
+    Write - Boolean
+    When set to true, enables a 32-bit application to run on a computer that runs a 64-bit version of Windows.
+
+.PARAMETER enableConfigurationOverride
+    Write - Boolean
+    When set to true, indicates that delegated settings in Web.config files will processed for applications within this application pool. When set to false, all settings in Web.config files will be ignored for this application pool.
+
+.PARAMETER managedPipelineMode
+    Write - String
+    Allowed values: Integrated, Classic
+    Indicates the request-processing mode that is used to process requests for managed content. The values that are allowed for this property are: Integrated, Classic.
+
+.PARAMETER managedRuntimeLoader
+    Write - String
+    Indicates the managed loader to use for pre-loading the application pool.
+
+.PARAMETER managedRuntimeVersion
+    Write - String
+    Allowed values: v4.0, v2.0, 
+    Indicates the CLR version to be used by the application pool. The values that are allowed for this property are: v4.0, v2.0, and ''.
+
+.PARAMETER passAnonymousToken
+    Write - Boolean
+    When set to true, the Windows Process Activation Service (WAS) creates and passes a token for the built-in IUSR anonymous user account to the Anonymous authentication module. The Anonymous authentication module uses the token to impersonate the built-in account. When this property is set to false, the token will not be passed.
+
+.PARAMETER startMode
+    Write - String
+    Allowed values: OnDemand, AlwaysRunning
+    Indicates the startup type for the application pool. The values that are allowed for this property are: OnDemand, AlwaysRunning.
+
+.PARAMETER queueLength
+    Write - UInt32
+    Indicates the maximum number of requests that HTTP.sys will queue for the application pool. The value must be a valid integer between 10 and 65535.
+
+.PARAMETER cpuAction
+    Write - String
+    Allowed values: NoAction, KillW3wp, Throttle, ThrottleUnderLoad
+    Configures the action that IIS takes when a worker process exceeds its configured CPU limit. The values that are allowed for this property are: NoAction, KillW3wp, Throttle, and ThrottleUnderLoad.
+
+.PARAMETER cpuLimit
+    Write - UInt32
+    Configures the maximum percentage of CPU time (in 1/1000ths of one percent) that the worker processes in the application pool are allowed to consume over a period of time as indicated by the cpuResetInterval property. The value must be a valid integer between 0 and 100000.
+
+.PARAMETER cpuResetInterval
+    Write - String
+    Indicates the reset period (in minutes) for CPU monitoring and throttling limits on the application pool. The value must be a string representation of a TimeSpan value. The valid range (in minutes) is 0 to 1440. Setting the value of this property to 0 disables CPU monitoring.
+
+.PARAMETER cpuSmpAffinitized
+    Write - Boolean
+    Indicates whether a particular worker process assigned to the application pool should also be assigned to a given CPU.
+
+.PARAMETER cpuSmpProcessorAffinityMask
+    Write - UInt32
+    Indicates the hexadecimal processor mask for multi-processor computers, which indicates to which CPU the worker processes in the application pool should be bound. Before this property takes effect, the cpuSmpAffinitized property must be set to true for the application pool. The value must be a valid integer between 0 and 4294967295.
+
+.PARAMETER cpuSmpProcessorAffinityMask2
+    Write - UInt32
+    Indicates the high-order DWORD hexadecimal processor mask for 64-bit multi-processor computers, which indicates to which CPU the worker processes in the application pool should be bound. Before this property takes effect, the cpuSmpAffinitized property must be set to true for the application pool. The value must be a valid integer between 0 and 4294967295.
+
+.PARAMETER identityType
+    Write - String
+    Allowed values: ApplicationPoolIdentity, LocalService, LocalSystem, NetworkService, SpecificUser
+    Indicates the account identity under which the application pool runs. The values that are allowed for this property are: ApplicationPoolIdentity, LocalService, LocalSystem, NetworkService, and SpecificUser.
+
+.PARAMETER Credential
+    Write - Instance
+    Indicates the custom account crededentials. This property is only valid when the identityType property is set to SpecificUser.
+
+.PARAMETER idleTimeout
+    Write - String
+    Indicates the amount of time (in minutes) a worker process will remain idle before it shuts down. The value must be a string representation of a TimeSpan value and must be less than the restartTimeLimit property value. The valid range (in minutes) is 0 to 43200.
+
+.PARAMETER idleTimeoutAction
+    Write - String
+    Allowed values: Terminate, Suspend
+    Indicates the action to perform when the idle timeout duration has been reached. The values that are allowed for this property are: Terminate, Suspend.
+
+.PARAMETER loadUserProfile
+    Write - Boolean
+    Indicates whether IIS loads the user profile for the application pool identity.
+
+.PARAMETER logEventOnProcessModel
+    Write - String
+    Indicates that IIS should generate an event log entry for each occurrence of the specified process model events.
+
+.PARAMETER logonType
+    Write - String
+    Allowed values: LogonBatch, LogonService
+    Indicates the logon type for the process identity. The values that are allowed for this property are: LogonBatch, LogonService.
+
+.PARAMETER manualGroupMembership
+    Write - Boolean
+    Indicates whether the IIS_IUSRS group Security Identifier (SID) is added to the worker process token.
+
+.PARAMETER maxProcesses
+    Write - UInt32
+    Indicates the maximum number of worker processes that would be used for the application pool. The value must be a valid integer between 0 and 2147483647.
+
+.PARAMETER pingingEnabled
+    Write - Boolean
+    Indicates whether pinging (health monitoring) is enabled for the worker process(es) serving this application pool.
+
+.PARAMETER pingInterval
+    Write - String
+    Indicates the period of time (in seconds) between health monitoring pings sent to the worker process(es) serving this application pool. The value must be a string representation of a TimeSpan value. The valid range (in seconds) is 1 to 4294967.
+
+.PARAMETER pingResponseTime
+    Write - String
+    Indicates the maximum time (in seconds) that a worker process is given to respond to a health monitoring ping. The value must be a string representation of a TimeSpan value. The valid range (in seconds) is 1 to 4294967.
+
+.PARAMETER setProfileEnvironment
+    Write - Boolean
+    Indicates the environment to be set based on the user profile for the new process.
+
+.PARAMETER shutdownTimeLimit
+    Write - String
+    Indicates the period of time (in seconds) a worker process is given to finish processing requests and shut down. The value must be a string representation of a TimeSpan value. The valid range (in seconds) is 1 to 4294967.
+
+.PARAMETER startupTimeLimit
+    Write - String
+    Indicates the period of time (in seconds) a worker process is given to start up and initialize. The value must be a string representation of a TimeSpan value. The valid range (in seconds) is 1 to 4294967.
+
+.PARAMETER orphanActionExe
+    Write - String
+    Indicates an executable to run when a worker process is orphaned.
+
+.PARAMETER orphanActionParams
+    Write - String
+    Indicates parameters for the executable that is specified in the orphanActionExe property.
+
+.PARAMETER orphanWorkerProcess
+    Write - Boolean
+    Indicates whether to assign a worker process to an orphan state instead of terminating it when the application pool fails. If true, an unresponsive worker process will be orphaned instead of terminated.
+
+.PARAMETER loadBalancerCapabilities
+    Write - String
+    Allowed values: HttpLevel, TcpLevel
+    Indicates the response behavior of a service when it is unavailable. The values that are allowed for this property are: HttpLevel, TcpLevel. If set to HttpLevel and the application pool is stopped, HTTP.sys will return HTTP 503 error. If set to TcpLevel, HTTP.sys will reset the connection.
+
+.PARAMETER rapidFailProtection
+    Write - Boolean
+    Indicates whether rapid-fail protection is enabled. If true, the application pool is shut down if there are a specified number of worker process crashes within a specified time period.
+
+.PARAMETER rapidFailProtectionInterval
+    Write - String
+    Indicates the time interval (in minutes) during which the specified number of worker process crashes must occur before the application pool is shut down by rapid-fail protection. The value must be a string representation of a TimeSpan value. The valid range (in minutes) is 1 to 144000.
+
+.PARAMETER rapidFailProtectionMaxCrashes
+    Write - UInt32
+    Indicates the maximum number of worker process crashes permitted before the application pool is shut down by rapid-fail protection. The value must be a valid integer between 0 and 2147483647.
+
+.PARAMETER autoShutdownExe
+    Write - String
+    Indicates an executable to run when the application pool is shut down by rapid-fail protection.
+
+.PARAMETER autoShutdownParams
+    Write - String
+    Indicates parameters for the executable that is specified in the autoShutdownExe property.
+
+.PARAMETER disallowOverlappingRotation
+    Write - Boolean
+    Indicates whether the W3SVC service should start another worker process to replace the existing worker process while that process is shutting down. If true, the application pool recycle will happen such that the existing worker process exits before another worker process is created.
+
+.PARAMETER disallowRotationOnConfigChange
+    Write - Boolean
+    Indicates whether the W3SVC service should rotate worker processes in the application pool when the configuration has changed. If true, the application pool will not recycle when its configuration is changed.
+
+.PARAMETER logEventOnRecycle
+    Write - String
+    Indicates that IIS should generate an event log entry for each occurrence of the specified recycling events.
+
+.PARAMETER restartMemoryLimit
+    Write - UInt32
+    Indicates the maximum amount of virtual memory (in KB) a worker process can consume before causing the application pool to recycle. The value must be a valid integer between 0 and 4294967295. A value of 0 means there is no limit.
+
+.PARAMETER restartPrivateMemoryLimit
+    Write - UInt32
+    Indicates the maximum amount of private memory (in KB) a worker process can consume before causing the application pool to recycle. The value must be a valid integer between 0 and 4294967295. A value of 0 means there is no limit.
+
+.PARAMETER restartRequestsLimit
+    Write - UInt32
+    Indicates the maximum number of requests the application pool can process before it is recycled. The value must be a valid integer between 0 and 4294967295. A value of 0 means the application pool can process an unlimited number of requests.
+
+.PARAMETER restartTimeLimit
+    Write - String
+    Indicates the period of time (in minutes) after which the application pool will recycle. The value must be a string representation of a TimeSpan value. The valid range (in minutes) is 0 to 432000. A value of 0 means the application pool does not recycle on a regular interval.
+
+.PARAMETER restartSchedule
+    Write - StringArray
+    Indicates a set of specific local times, in 24 hour format, when the application pool is recycled. The value must be an array of string representations of TimeSpan values. TimeSpan values must be between 00:00:00 and 23:59:59 seconds inclusive, with a granularity of 60 seconds. Setting the value of this property to '' disables the schedule.
+
+.EXAMPLE 1
+
+Create and configure an application pool.
+This example shows how to use the xWebAppPool DSC resource to create and configure an application pool.
+
+Configuration Sample_xWebAppPool
+{
+    param
+    (
+        [String[]]$NodeName = 'localhost'
+    )
+
+    Import-DscResource -ModuleName xWebAdministration
+
+    Node $NodeName
+    {
+        xWebAppPool SampleAppPool
+        {
+            Name                           = 'SampleAppPool'
+            Ensure                         = 'Present'
+            State                          = 'Started'
+            autoStart                      = $true
+            CLRConfigFile                  = ''
+            enable32BitAppOnWin64          = $false
+            enableConfigurationOverride    = $true
+            managedPipelineMode            = 'Integrated'
+            managedRuntimeLoader           = 'webengine4.dll'
+            managedRuntimeVersion          = 'v4.0'
+            passAnonymousToken             = $true
+            startMode                      = 'OnDemand'
+            queueLength                    = 1000
+            cpuAction                      = 'NoAction'
+            cpuLimit                       = 90000
+            cpuResetInterval               = (New-TimeSpan -Minutes 5).ToString()
+            cpuSmpAffinitized              = $false
+            cpuSmpProcessorAffinityMask    = 4294967295
+            cpuSmpProcessorAffinityMask2   = 4294967295
+            identityType                   = 'ApplicationPoolIdentity'
+            idleTimeout                    = (New-TimeSpan -Minutes 20).ToString()
+            idleTimeoutAction              = 'Terminate'
+            loadUserProfile                = $true
+            logEventOnProcessModel         = 'IdleTimeout'
+            logonType                      = 'LogonBatch'
+            manualGroupMembership          = $false
+            maxProcesses                   = 1
+            pingingEnabled                 = $true
+            pingInterval                   = (New-TimeSpan -Seconds 30).ToString()
+            pingResponseTime               = (New-TimeSpan -Seconds 90).ToString()
+            setProfileEnvironment          = $false
+            shutdownTimeLimit              = (New-TimeSpan -Seconds 90).ToString()
+            startupTimeLimit               = (New-TimeSpan -Seconds 90).ToString()
+            orphanActionExe                = ''
+            orphanActionParams             = ''
+            orphanWorkerProcess            = $false
+            loadBalancerCapabilities       = 'HttpLevel'
+            rapidFailProtection            = $true
+            rapidFailProtectionInterval    = (New-TimeSpan -Minutes 5).ToString()
+            rapidFailProtectionMaxCrashes  = 5
+            autoShutdownExe                = ''
+            autoShutdownParams             = ''
+            disallowOverlappingRotation    = $false
+            disallowRotationOnConfigChange = $false
+            logEventOnRecycle              = 'Time,Requests,Schedule,Memory,IsapiUnhealthy,OnDemand,ConfigChange,PrivateMemory'
+            restartMemoryLimit             = 0
+            restartPrivateMemoryLimit      = 0
+            restartRequestsLimit           = 0
+            restartTimeLimit               = (New-TimeSpan -Minutes 1440).ToString()
+            restartSchedule                = @('00:00:00', '08:00:00', '16:00:00')
+        }
+    }
+}
+

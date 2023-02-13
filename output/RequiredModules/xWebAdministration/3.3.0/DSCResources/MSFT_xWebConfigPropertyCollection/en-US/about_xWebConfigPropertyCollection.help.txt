@@ -1,0 +1,129 @@
+.NAME
+    xWebConfigPropertyCollection
+
+.DESCRIPTION
+    The xWebConfigPropertyCollection DSC resource is used to ensure the value of an
+    identified property collection item's property in the web.config file.
+
+    >Builds upon the deprecated xWebConfigKeyValue resource to support all web.config
+    >elements that contain collections of child items.
+
+    ## Requirements
+
+    * Target machine must be running Windows Server 2012 R2 or later.
+
+    ## Known issues
+
+    All issues are not listed here, see https://github.com/dsccommunity/xWebAdministration/issues?q=is%3Aissue+is%3Aopen+in%3Atitle+xWebConfigPropertyCollection.
+
+.PARAMETER WebsitePath
+    Key - String
+    Path to website location (IIS or WebAdministration format).
+
+.PARAMETER Filter
+    Key - String
+    Filter used to locate property collection to update.
+
+.PARAMETER CollectionName
+    Key - String
+    Name of the property collection to update.
+
+.PARAMETER ItemName
+    Key - String
+    Name of the property collection item to update.
+
+.PARAMETER ItemKeyName
+    Key - String
+    Name of the key of the property collection item to update.
+
+.PARAMETER ItemKeyValue
+    Key - String
+    Value of the key of the property collection item to update.
+
+.PARAMETER ItemPropertyName
+    Key - String
+    Name of the property of the property collection item to update.
+
+.PARAMETER ItemPropertyValue
+    Write - String
+    Value of the property of the property collection item to update.
+
+.PARAMETER Ensure
+    Write - String
+    Allowed values: Present, Absent
+    Indicates if the property and value of the property collection item should be present or absent. Defaults to Present.
+
+.EXAMPLE 1
+
+Disables the HTTP TRACE method at the server level.
+
+This example shows how to use the xWebConfigPropertyCollection DSC resource for adding a configuration element.
+It will add an "add" element to the system.webServer/security/requestFiltering/verbs collection to disable the HTTP TRACE verb.
+
+Configuration Sample_xWebConfigPropertyCollection_Add
+{
+    param
+    (
+        # Target nodes to apply the configuration.
+        [Parameter()]
+        [String[]]
+        $NodeName = 'localhost'
+    )
+
+    # Import the modules that define custom resources
+    Import-DscResource -ModuleName xWebAdministration
+
+    Node $NodeName
+    {
+        xWebConfigPropertyCollection "$($NodeName) - Disable HTTP TRACE method"
+        {
+            WebsitePath       = 'MACHINE/WEBROOT/APPHOST'
+            Filter            = 'system.webServer/security/requestFiltering'
+            CollectionName    = 'verbs'
+            ItemName          = 'add'
+            ItemKeyName       = 'verb'
+            ItemKeyValue      = 'TRACE'
+            ItemPropertyName  = 'allowed'
+            ItemPropertyValue = 'false'
+            Ensure            = 'Present'
+        }
+    }
+}
+
+.EXAMPLE 2
+
+Removes disabling the HTTP TRACE method at the server level.
+
+This example shows how to use the xWebConfigPropertyCollection DSC resource for removing a configuration element.
+It will remove the "add" element from the system.webServer/security/requestFiltering/verbs collection (if present) for disabling the HTTP TRACE verb.
+
+Configuration Sample_xWebConfigPropertyCollection_Remove
+{
+    param
+    (
+        # Target nodes to apply the configuration.
+        [Parameter()]
+        [String[]]
+        $NodeName = 'localhost'
+    )
+
+    # Import the modules that define custom resources
+    Import-DscResource -ModuleName xWebAdministration
+
+    Node $NodeName
+    {
+        xWebConfigPropertyCollection "$($NodeName) - Remove disabling HTTP TRACE method"
+        {
+            WebsitePath       = 'MACHINE/WEBROOT/APPHOST'
+            Filter            = 'system.webServer/security/requestFiltering'
+            CollectionName    = 'verbs'
+            ItemName          = 'add'
+            ItemKeyName       = 'verb'
+            ItemKeyValue      = 'TRACE'
+            ItemPropertyName  = 'allowed'
+            ItemPropertyValue = 'false'
+            Ensure            = 'Absent'
+        }
+    }
+}
+

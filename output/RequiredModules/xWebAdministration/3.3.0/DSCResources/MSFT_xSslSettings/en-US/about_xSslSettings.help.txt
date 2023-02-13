@@ -1,0 +1,53 @@
+.NAME
+    xSslSettings
+
+.DESCRIPTION
+    The xSslSettings DSC resource is used to...
+
+    ## Requirements
+
+    * Target machine must be running Windows Server 2012 R2 or later.
+
+    ## Known issues
+
+    All issues are not listed here, see https://github.com/dsccommunity/xWebAdministration/issues?q=is%3Aissue+is%3Aopen+in%3Atitle+xSslSettings.
+
+.PARAMETER Name
+    Key - String
+    Name of website in which to modify the SSL Settings
+
+.PARAMETER Bindings
+    Required - StringArray
+    Allowed values: , Ssl, SslNegotiateCert, SslRequireCert, Ssl128
+    The Bindings in which to modify for the website
+
+.PARAMETER Ensure
+    Write - String
+    Allowed values: Present, Absent
+    Whether the bindings should be present or absent
+
+.EXAMPLE 1
+
+
+configuration Sample_xSslSettings_RequireCert
+{
+    param
+    (
+        # Target nodes to apply the configuration
+        [String[]] $NodeName = 'localhost'
+    )
+
+    # Import the module that defines custom resources
+    Import-DscResource -Module xWebAdministration
+
+    Node $NodeName
+    {
+        xSslSettings SiteDefaults
+        {
+            Ensure   = 'Present'
+            Name     = 'contoso.com'
+            Bindings = @('Ssl', 'SslNegotiateCert', 'SslRequireCert')
+        }
+    }
+}
+

@@ -1,0 +1,201 @@
+.NAME
+    xWebApplication
+
+.DESCRIPTION
+    The xWebApplication DSC resource is used to...
+
+    ## Requirements
+
+    * Target machine must be running Windows Server 2012 R2 or later.
+
+    ## Known issues
+
+    All issues are not listed here, see https://github.com/dsccommunity/xWebAdministration/issues?q=is%3Aissue+is%3Aopen+in%3Atitle+xWebApplication.
+
+.PARAMETER Website
+    Key - String
+    Name of website with which web application is associated
+
+.PARAMETER Name
+    Key - String
+    Name of web application
+
+.PARAMETER WebAppPool
+    Required - String
+    Web application pool for the web application
+
+.PARAMETER PhysicalPath
+    Required - String
+    Physical path for the web application directory
+
+.PARAMETER Ensure
+    Write - String
+    Allowed values: Present, Absent
+    Whether web application should be present or absent
+
+.PARAMETER SslFlags
+    Write - StringArray
+    Allowed values: , Ssl, SslNegotiateCert, SslRequireCert, Ssl128
+    SSLFlags for the application
+
+.PARAMETER AuthenticationInfo
+    Write - Instance
+    Hashtable containing authentication information (Anonymous, Basic, Digest, Windows)
+
+.PARAMETER PreloadEnabled
+    Write - Boolean
+    Allows a Application to automatically start without a request
+
+.PARAMETER ServiceAutoStartEnabled
+    Write - Boolean
+    Enables Autostart on an Application.
+
+.PARAMETER ServiceAutoStartProvider
+    Write - String
+    Adds a AutostartProvider
+
+.PARAMETER ApplicationType
+    Write - String
+    Adds a AutostartProvider ApplicationType
+
+.PARAMETER EnabledProtocols
+    Write - StringArray
+    Allowed values: http, https, net.tcp, net.msmq, net.pipe
+    Adds EnabledProtocols on an Application
+
+.EXAMPLE 1
+
+Create a new web application on the Default Web Site
+This example shows how to use the xWebApplication DSC resource to create a new web application.
+
+Configuration Sample_xWebApplication_NewWebApplication
+{
+    param
+    (
+        # Target nodes to apply the configuration
+        [String[]] $NodeName = 'localhost',
+
+        # Destination path for Website content
+        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        [String] $DestinationPath
+    )
+
+    # Import the module that defines custom resources
+    Import-DscResource -Module PSDesiredStateConfiguration
+    Import-DscResource -Module xWebAdministration
+
+    Node $NodeName
+    {
+        # Install the IIS role
+        WindowsFeature IIS
+        {
+            Ensure                  = 'Present'
+            Name                    = 'Web-Server'
+        }
+
+        # Install the ASP .NET 4.5 role
+        WindowsFeature AspNet45
+        {
+            Ensure                  = 'Present'
+            Name                    = 'Web-Asp-Net45'
+        }
+
+        # Start the Default Web Site
+        xWebSite DefaultSite
+        {
+            Ensure                  = 'Present'
+            Name                    = 'Default Web Site'
+            State                   = 'Started'
+            PhysicalPath            = 'C:\inetpub\wwwroot'
+            DependsOn               = '[WindowsFeature]IIS'
+        }
+
+        # Create a new application pool for the application
+        xWebAppPool SampleAppPool
+        {
+            Ensure                  = 'Present'
+            Name                    = 'SampleAppPool'
+        }
+
+        # Clone the wwwroot folder to the destination
+        File WebContent
+        {
+            Ensure                  = 'Present'
+            SourcePath              = 'C:\inetpub\wwwroot'
+            DestinationPath         = $DestinationPath
+            Recurse                 = $true
+            Type                    = 'Directory'
+            DependsOn               = '[WindowsFeature]IIS'
+        }
+
+        # Create a new web application with Windows Authentication
+        xWebApplication SampleApplication
+        {
+            Ensure                  = 'Present'
+            Name                    = 'SampleApplication'
+            WebAppPool              = 'SampleAppPool'
+            Website                 = 'Default Web Site'
+            PreloadEnabled          = $true
+            ServiceAutoStartEnabled = $true
+            AuthenticationInfo      = MSFT_xWebApplicationAuthenticationInformation
+            {
+                Anonymous   = $false
+                Basic       = $false
+                Digest      = $false
+                Windows     = $true
+            }
+            SslFlags                = ''
+            PhysicalPath            = $DestinationPath
+            DependsOn               = '[xWebSite]DefaultSite','[xWebAppPool]SampleAppPool'
+        }
+    }
+}
+
+
+.EXAMPLE 2
+
+This shows an example for all possible settings for the xWebApplication resource
+
+configuration Sample_xWebApplication
+{
+
+    param
+    (
+        # Target nodes to apply the configuration
+        [String[]] $NodeName = 'localhost',
+
+        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        [String] $PhysicalPath
+    )
+
+    Import-DscResource -ModuleName xWebAdministration
+
+    node $NodeName
+    {
+        xWebApplication WebApplication
+        {
+            Website                  = 'Website'
+            Ensure                   = 'Present'
+            Name                     = 'WebApplication'
+            PhysicalPath             = $PhysicalPath
+            WebAppPool               = 'DefaultAppPool'
+            ApplicationType          = 'ApplicationType'
+            AuthenticationInfo       = `
+                MSFT_xWebApplicationAuthenticationInformation
+            {
+                Anonymous = $true
+                Basic     = $false
+                Digest    = $false
+                Windows   = $false
+            }
+            PreloadEnabled           = $true
+            ServiceAutoStartEnabled  = $true
+            ServiceAutoStartProvider = 'ServiceAutoStartProvider'
+            SslFlags                 = @('Ssl')
+            EnabledProtocols         = @('http', 'net.tcp')
+        }
+    }
+}
+

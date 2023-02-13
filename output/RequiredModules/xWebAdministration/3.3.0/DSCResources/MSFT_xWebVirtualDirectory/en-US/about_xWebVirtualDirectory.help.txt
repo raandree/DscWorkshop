@@ -1,0 +1,107 @@
+.NAME
+    xWebVirtualDirectory
+
+.DESCRIPTION
+    The xWebVirtualDirectory DSC resource is used to...
+
+    ## Requirements
+
+    * Target machine must be running Windows Server 2012 R2 or later.
+
+    ## Known issues
+
+    All issues are not listed here, see https://github.com/dsccommunity/xWebAdministration/issues?q=is%3Aissue+is%3Aopen+in%3Atitle+xWebVirtualDirectory.
+
+.PARAMETER Website
+    Key - String
+    Name of website with which Web Application is associated
+
+.PARAMETER WebApplication
+    Key - String
+    Web application name for the virtual directory
+
+.PARAMETER Name
+    Key - String
+    Name of virtual directory
+
+.PARAMETER PhysicalPath
+    Required - String
+    Physical path for the virtual directory
+
+.PARAMETER Ensure
+    Write - String
+    Allowed values: Present, Absent
+    Whether virtual directory should be present or absent
+
+.EXAMPLE 1
+
+Create a new web virtual directory on the Default Web Site
+This example shows how to use the xWebVirtualDirectory DSC resource to create a new virtual
+directory on the Default Web Site.
+
+configuration Sample_xWebVirtualDirectory_NewVirtualDirectory
+{
+    param
+    (
+        # Target nodes to apply the configuration
+        [System.String[]]
+        $NodeName = 'localhost',
+
+        # Name of virtual directory to create
+        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        [System.String]
+        $VirtualDirectoryName,
+
+        # Physical path of the virtual directory
+        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        [System.String]
+        $PhysicalPath
+    )
+
+    # Import the module that defines custom resources
+    Import-DscResource -Module PSDesiredStateConfiguration
+    Import-DscResource -Module xWebAdministration
+
+    Node $NodeName
+    {
+        # Install the IIS role
+        WindowsFeature IIS
+        {
+            Ensure = 'Present'
+            Name   = 'Web-Server'
+        }
+
+        # Start the default website
+        xWebSite DefaultSite
+        {
+            Ensure       = 'Present'
+            Name         = 'Default Web Site'
+            State        = 'Started'
+            PhysicalPath = 'C:\inetpub\wwwroot'
+            DependsOn    = '[WindowsFeature]IIS'
+        }
+
+        # Copy the virtual directory content
+        File VirtualDirectoryContent
+        {
+            Ensure          = 'Present'
+            DestinationPath = $PhysicalPath
+            Type            = 'Directory'
+            DependsOn       = '[WindowsFeature]IIS'
+        }
+
+        # Create the new virtual directory
+        xWebVirtualDirectory NewVirtualDirectory
+        {
+            Ensure         = 'Present'
+            Website        = "Default Web Site"
+            WebApplication = ''
+            Name           = $VirtualDirectoryName
+            PhysicalPath   = $PhysicalPath
+            DependsOn      = '[File]VirtualDirectoryContent'
+        }
+    }
+}
+

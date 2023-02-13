@@ -1,0 +1,130 @@
+.NAME
+    xIisLogging
+
+.DESCRIPTION
+    The xIISLogging DSC resource is used to set the logfile settings for all
+    websites; for individual websites use the Log options under xWebSite.
+
+    ## Requirements
+
+    * Target machine must be running Windows Server 2012 R2 or later.
+
+    ## Known issues
+
+    All issues are not listed here, see https://github.com/dsccommunity/xWebAdministration/issues?q=is%3Aissue+is%3Aopen+in%3Atitle+xIISLogging.
+
+.PARAMETER LogPath
+    Key - String
+    The directory to be used for logfiles
+
+.PARAMETER LogFlags
+    Write - StringArray
+    Allowed values: Date, Time, ClientIP, UserName, SiteName, ComputerName, ServerIP, Method, UriStem, UriQuery, HttpStatus, Win32Status, BytesSent, BytesRecv, TimeTaken, ServerPort, UserAgent, Cookie, Referer, ProtocolVersion, Host, HttpSubStatus
+    The W3C logging fields
+
+.PARAMETER LogPeriod
+    Write - String
+    Allowed values: Hourly, Daily, Weekly, Monthly, MaxSize
+    How often the log file should rollover
+
+.PARAMETER LogTruncateSize
+    Write - String
+    How large the file should be before it is truncated
+
+.PARAMETER LoglocalTimeRollover
+    Write - Boolean
+    Use the localtime for file naming and rollover
+
+.PARAMETER LogFormat
+    Write - String
+    Allowed values: IIS, W3C, NCSA
+    Format of the Logfiles. Only W3C supports LogFlags
+
+.PARAMETER LogTargetW3C
+    Write - String
+    Allowed values: File, ETW, File,ETW
+    Specifies whether IIS will use Event Tracing or file logging
+
+.PARAMETER LogCustomFields
+    Write - InstanceArray
+    Custom logging field information in the form of an array of embedded instances of MSFT_xLogCustomField CIM class
+
+.EXAMPLE 1
+
+
+configuration Sample_xIisLogging_LogFlags
+{
+    param
+    (
+        # Target nodes to apply the configuration
+        [String[]] $NodeName = 'localhost'
+    )
+
+    # Import the module that defines custom resources
+    Import-DscResource -Module xWebAdministration
+
+    Node $NodeName
+    {
+        xIisLogging Logging
+        {
+            LogPath              = 'C:\IISLogFiles'
+            Logflags             = @('Date', 'Time', 'ClientIP', 'ServerIP', 'UserAgent')
+            LogFormat            = 'W3C'
+        }
+    }
+}
+
+.EXAMPLE 2
+
+
+configuration Sample_xIisLogging_Rollover
+{
+    param
+    (
+        # Target nodes to apply the configuration
+        [String[]] $NodeName = 'localhost'
+    )
+
+    # Import the module that defines custom resources
+    Import-DscResource -Module xWebAdministration
+
+    Node $NodeName
+    {
+        xIisLogging Logging
+        {
+            LogPath              = 'C:\IISLogFiles'
+            Logflags             = @('Date', 'Time', 'ClientIP', 'UserName', 'ServerIP')
+            LoglocalTimeRollover = $true
+            LogPeriod            = 'Hourly'
+            LogFormat            = 'W3C'
+        }
+    }
+}
+
+.EXAMPLE 3
+
+
+configuration Sample_xIisLogging_Truncate
+{
+    param
+    (
+        # Target nodes to apply the configuration
+        [String[]] $NodeName = 'localhost'
+    )
+
+    # Import the module that defines custom resources
+    Import-DscResource -Module xWebAdministration
+
+    Node $NodeName
+    {
+        xIisLogging Logging
+        {
+            LogPath              = 'C:\IISLogFiles'
+            Logflags             = @('Date', 'Time', 'ClientIP', 'UserName', 'ServerIP')
+            LoglocalTimeRollover = $true
+            LogTruncateSize      = '2097152'
+            LogFormat            = 'W3C'
+        }
+    }
+}
+

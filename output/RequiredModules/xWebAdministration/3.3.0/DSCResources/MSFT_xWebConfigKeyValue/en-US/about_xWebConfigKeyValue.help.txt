@@ -1,0 +1,109 @@
+.NAME
+    xWebConfigKeyValue
+
+.DESCRIPTION
+    >NOTE: The xWebConfigKeyValue resource is deprecated and has been replaced by the xWebConfigProperty and xWebConfigPropertyCollection resources.
+    >It may be removed in a future release.
+
+    ## Requirements
+
+    * Target machine must be running Windows Server 2012 R2 or later.
+
+    ## Known issues
+
+    All issues are not listed here, see https://github.com/dsccommunity/xWebAdministration/issues?q=is%3Aissue+is%3Aopen+in%3Atitle+xWebConfigKeyValue.
+
+.PARAMETER WebsitePath
+    Key - String
+    Path to website location(IIS or WebAdministration format)
+
+.PARAMETER ConfigSection
+    Key - String
+    Allowed values: AppSettings
+    Config Section to be update
+
+.PARAMETER Key
+    Key - String
+    Key for AppSettings
+
+.PARAMETER Ensure
+    Write - String
+    Allowed values: Present, Absent
+    Indicates if the property and value should be present or absent. Defaults to Present.
+
+.PARAMETER Value
+    Write - String
+    Value for AppSettings
+
+.PARAMETER IsAttribute
+    Write - Boolean
+    If the given key value pair is for attribute, default is element
+
+.EXAMPLE 1
+
+Adds an app setting WebsiteTitle to the configuration file of the website.
+This example shows how to use the xWebConfigKeyValue DSC resource for adding an extra key and value to appSettings.
+It will add a key WebSiteTitle with value to the configuration of the site specified.
+
+Configuration Sample_xWebConfigKeyValue_AddAppSetting
+{
+    param
+    (
+        # Target nodes to apply the configuration.
+        [String[]] $NodeName = 'localhost',
+
+        # Target website to which the key should be added.
+        [String]   $WebsiteName = 'Default Web Site'
+    )
+
+    # Import the modules that define custom resources
+    Import-DscResource -Module xWebAdministration
+
+    Node $NodeName
+    {
+        # Adds an extra app setting to the AppSettings section.
+        xWebConfigKeyValue DefaultSite
+        {
+            Ensure        = 'Present'
+            ConfigSection = 'AppSettings'
+            Key           = 'WebsiteTitle'
+            Value         = 'xWebAdministration DSC Examples'
+            WebsitePath   = 'IIS:\Sites\' + $WebsiteName
+        }
+    }
+}
+
+.EXAMPLE 2
+
+Removes an app setting WebsiteTitle from the configuration file of the website if present.
+This example shows how to use the xWebConfigKeyValue DSC resource for ensuring a key is not pressent in appSettings.
+It will remove a setting with key WebSiteTitle from the configuration of the site specified.
+
+Configuration Sample_xWebConfigKeyValue_RemoveAppSetting
+{
+    param
+    (
+        # Target nodes to apply the configuration.
+        [String[]] $NodeName = 'localhost',
+
+        # Target website from which the key should be removed.
+        [String]   $WebsiteName = 'Default Web Site'
+    )
+
+    # Import the modules that define custom resources
+    Import-DscResource -Module xWebAdministration
+
+    Node $NodeName
+    {
+        # Removes an extra app setting from the AppSettings section.
+        xWebConfigKeyValue DefaultSite
+        {
+            Ensure        = 'Absent'
+            ConfigSection = 'AppSettings'
+            Key           = 'WebsiteTitle'
+            Value         = 'xWebAdministration DSC Examples'
+            WebsitePath   = 'IIS:\Sites\' + $WebsiteName
+        }
+    }
+}
+

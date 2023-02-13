@@ -1,0 +1,108 @@
+param
+(
+    # Project path
+    [Parameter()]
+    [System.String]
+    $ProjectPath = (property ProjectPath $BuildRoot),
+
+    # Source path
+    [Parameter()]
+    [System.String]
+    $SourcePath = (property SourcePath 'source'),
+
+    [Parameter()]
+    # Base directory of all output (default to 'output')
+    [System.String]
+    $OutputDirectory = (property OutputDirectory (Join-Path -Path  $BuildRoot -ChildPath output)),
+
+    [Parameter()]
+    [string]
+    $RequiredModulesDirectory = (property RequiredModulesDirectory 'RequiredModules'),
+
+    [Parameter()]
+    [string]
+    $DatumConfigDataDirectory = (property DatumConfigDataDirectory 'source'),
+
+    [Parameter()]
+    [string]
+    $MofOutputFolder = (property MofOutputFolder 'MOF'),
+
+    [Parameter()]
+    [int]
+    $CurrentJobNumber = (property CurrentJobNumber 1),
+
+    [Parameter()]
+    [int]
+    $TotalJobCount = (property TotalJobCount 1),
+
+    # Build Configuration object
+    [Parameter()]
+    [System.Collections.Hashtable]
+    $BuildInfo = (property BuildInfo @{ })
+)
+
+task CompileRootConfiguration {
+    . Set-SamplerTaskVariable -AsNewBuild
+
+    $RequiredModulesDirectory = Get-SamplerAbsolutePath -Path $RequiredModulesDirectory -RelativeTo $OutputDirectory
+
+    Write-Build DarkGray 'Reading DSC Resource metadata for supporting CIM based DSC parameters...'
+    Initialize-DscResourceMetaInfo -ModulePath $RequiredModulesDirectory
+    Write-Build DarkGray 'Done'
+
+    $MofOutputFolder = Get-SamplerAbsolutePath -Path $MofOutputFolder -RelativeTo $OutputDirectory
+
+    if (-not (Test-Path -Path $MofOutputFolder))
+    {
+        $null = New-Item -ItemType Directory -Path $MofOutputFolder -Force
+    }
+
+    Start-Transcript -Path "$BuildOutput\Logs\CompileRootConfiguration.log"
+    try
+    {
+        $originalPSModulePath = $env:PSModulePath
+        $env:PSModulePath = ($env:PSModulePath -split [System.IO.Path]::PathSeparator).Where({
+                $_ -notmatch ([regex]::Escape('powershell\7\Modules')) -and
+                $_ -notmatch ([regex]::Escape('Program Files\WindowsPowerShell\Modules')) -and
+                $_ -notmatch ([regex]::Escape('Documents\PowerShell\Modules'))
+            }) -join [System.IO.Path]::PathSeparator
+
+        Write-Build Green ''
+        if ((Test-Path -Path (Join-Path -Path $SourcePath -ChildPath RootConfiguration.ps1)) -and
+        (Test-Path -Path (Join-Path -Path $SourcePath -ChildPath CompileRootConfiguration.ps1)))
+        {
+            Write-Build Green "Found 'RootConfiguration.ps1' and 'CompileRootConfiguration.ps1' in '$SourcePath' and using these files"
+            $rootConfigurationPath = Join-Path -Path $SourcePath -ChildPath CompileRootConfiguration.ps1
+        }
+        else
+        {
+            Write-Build Green "Did not find 'RootConfiguration.ps1' and 'CompileRootConfiguration.ps1' in '$SourcePath', using the ones in 'Sampler.DscPipeline'"
+            $rootConfigurationPath = Split-Path -Path $PSScriptRoot -Parent
+            $rootConfigurationPath = Join-Path -Path $rootConfigurationPath -ChildPath Scripts
+            $rootConfigurationPath = Join-Path -Path $rootConfigurationPath -ChildPath CompileRootConfiguration.ps1
+        }
+
+        $mofs = . $rootConfigurationPath
+        if ($ConfigurationData.AllNodes.Count -ne $mofs.Count)
+        {
+            Write-Warning -Message "Compiled MOF file count <> node count. Node count: $($ConfigurationData.AllNodes.Count), MOF file count: $($($mofs.Count))."
+        }
+
+        Write-Build Green "Successfully compiled $($mofs.Count) MOF files"
+    }
+    catch
+    {
+        Write-Build Red "ERROR OCCURED DURING COMPILATION: $($_.Exception.Message)"
+        $relevantErrors = $Error | Where-Object -FilterScript {
+            $_.Exception -isnot [System.Management.Automation.ItemNotFoundException]
+        }
+
+        $relevantErrors[0..2] | Out-String | ForEach-Object { Write-Warning -Message $_ }
+    }
+    finally
+    {
+        $env:PSModulePath = $originalPSModulePath
+        Stop-Transcript
+    }
+
+}

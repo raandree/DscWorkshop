@@ -1,0 +1,101 @@
+.NAME
+    WebApplicationHandler
+
+.DESCRIPTION
+    The WebApplicationHandler DSC resource is used to ...
+
+    ## Requirements
+
+    * Target machine must be running Windows Server 2012 R2 or later.
+
+    ## Known issues
+
+    All issues are not listed here, see https://github.com/dsccommunity/xWebAdministration/issues?q=is%3Aissue+is%3Aopen+in%3Atitle+WebApplicationHandler.
+
+.PARAMETER Name
+    Key - String
+    Specifies the name of the new request handler.
+
+.PARAMETER Ensure
+    Write - String
+    Allowed values: Present, Absent
+    Indicates if the application handler exists. Set this property to Absent to ensure that the application handler does not exist. Default value is 'Present'.
+
+.PARAMETER physicalHandlerPath
+    Write - String
+    Specifies the physical path to the handler. This parameter applies to native modules only.
+
+.PARAMETER Verb
+    Write - String
+    Specifies the HTTP verbs that are handled by the new handler.
+
+.PARAMETER Path
+    Required - StringArray
+    Specifies an IIS configuration path.
+
+.PARAMETER Type
+    Write - String
+    Specifies the managed type of the new module. This parameter applies to managed modules only.
+
+.PARAMETER Modules
+    Write - String
+    Specifies the modules used for the handler.
+
+.PARAMETER ScriptProcessor
+    Write - String
+    Specifies the script processor that runs for the module.
+
+.PARAMETER PreCondition
+    Write - String
+    Specifies preconditions for the new handler.
+
+.PARAMETER RequireAccess
+    Write - String
+    Allowed values: None, Read, Write, Script, Execute
+    Specifies the user rights that are required for the new handler.
+
+.PARAMETER ResourceType
+    Write - String
+    Specifies the resource type this handler runs.
+
+.PARAMETER AllowPathInfo
+    Write - Boolean
+    Specifies whether the handler processes full path information in a URI, such as contoso/marketing/imageGallery.aspx. If the value is true, the handler processes the full path, contoso/marketing/imageGallery. If the value is false, the handler processes only the last section of the path, /imageGallery.
+
+.PARAMETER ResponseBufferLimit
+    Write - UInt32
+    Specifies the maximum size, in bytes, of the response buffer for a request handler runs.
+
+.PARAMETER Location
+    Write - String
+    Specifies The location of the configuration setting. Location tags are frequently used for configuration settings that must be set more precisely than per application or per virtual directory.
+
+.EXAMPLE 1
+
+
+Configuration Example
+{
+    Import-DscResource -ModuleName xWebAdministration
+
+    Node 'localhost'
+    {
+
+        WebApplicationHandler  WebHandlerTest
+        {
+            Path                 = 'MACHINE/WEBROOT/APPHOST'
+            Name                 = 'ATest-WebHandler'
+            PhysicalHandlerPath  = '*'
+            Verb                 = '*'
+            Modules              = 'IsapiModule'
+            RequireAccess        = 'None'
+            ScriptProcessor      = "C:\Windows\Microsoft.NET\Framework64\v4.0.30319\aspnet_isapi.dll"
+            ResourceType         = 'Unspecified'
+            AllowPathInfo        = $false
+            ResponseBufferLimit  = 0
+            Type                 = $null
+            PreCondition         = $null
+            Location             = 'Default Web Site/TestDir'
+        }
+    }
+}
+

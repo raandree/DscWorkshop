@@ -1,0 +1,58 @@
+.NAME
+    xWebAppPoolDefaults
+
+.DESCRIPTION
+    The xWebAppPoolDefaults DSC resource is used to...
+
+    ## Requirements
+
+    * Target machine must be running Windows Server 2012 R2 or later.
+
+    ## Known issues
+
+    All issues are not listed here, see https://github.com/dsccommunity/xWebAdministration/issues?q=is%3Aissue+is%3Aopen+in%3Atitle+xWebAppPoolDefaults.
+
+.PARAMETER IsSingleInstance
+    Key - String
+    Allowed values: Yes
+    Specifies the resource is a single instance, the value must be 'Yes'
+
+.PARAMETER ManagedRuntimeVersion
+    Write - String
+    Allowed values: , v2.0, v4.0
+    applicationPools/applicationPoolDefaults/managedRuntimeVersion
+
+.PARAMETER IdentityType
+    Write - String
+    Allowed values: ApplicationPoolIdentity, LocalService, LocalSystem, NetworkService
+    applicationPools/applicationPoolDefaults/processModel/identityType
+
+.EXAMPLE 1
+
+An example of configuring the application pool default settings.
+This examples show how to use xWebAppPoolDefaults for configuring the application pool default settings.
+The resource is currently limited to configuring the managed runtime version and the identity used for the application pools.
+
+Configuration Sample_xWebAppPoolDefaults
+{
+    param
+    (
+        # Target nodes to apply the configuration
+        [string[]]$NodeName = 'localhost'
+    )
+
+    # Import the module that defines custom resources
+    Import-DscResource -Module xWebAdministration, PSDesiredStateConfiguration
+
+    Node $NodeName
+    {
+        # Configures the application pool defaults.
+        xWebAppPoolDefaults PoolDefaults
+        {
+            IsSingleInstance      = 'Yes'
+            ManagedRuntimeVersion = 'v4.0'
+            IdentityType          = 'ApplicationPoolIdentity'
+        }
+    }
+}
+

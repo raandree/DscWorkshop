@@ -1,0 +1,130 @@
+.NAME
+    xIisFeatureDelegation
+
+.DESCRIPTION
+    The xIisFeatureDelegation DSC resource is used to manage the IIS configuration
+    section locking (overrideMode) to control what configuration can be set in web.config.
+
+    ## Requirements
+
+    * Target machine must be running Windows Server 2012 R2 or later.
+
+    ## Known issues
+
+    All issues are not listed here, see https://github.com/dsccommunity/xWebAdministration/issues?q=is%3Aissue+is%3Aopen+in%3Atitle+xIisFeatureDelegation.
+
+.PARAMETER Path
+    Key - String
+    Specifies the configuration path. This can be either an IIS configuration path in the format computer machine/webroot/apphost, or the IIS module path in this format IIS:\sites\Default Web Site.
+
+.PARAMETER Filter
+    Key - String
+    Specifies the IIS configuration section to lock or unlock.
+
+.PARAMETER OverrideMode
+    Required - String
+    Allowed values: Allow, Deny
+    Determines whether to lock or unlock the specified section.
+
+.EXAMPLE 1
+
+This example will install the IIS Windows Feature and unlocks the IIS configuration
+sections specified by the Filter setting. This example uses the IIS Configuration Path format
+for the 'Path' setting.
+
+configuration Example
+{
+    param
+    (
+        [Parameter()]
+        [string[]]
+        $NodeName = 'localhost'
+    )
+
+    Import-DscResource -Module xWebAdministration
+    Import-DscResource -Module PSDesiredStateConfiguration
+
+    Node $NodeName
+    {
+        # Install the IIS role
+        WindowsFeature IIS
+        {
+            Ensure = 'Present'
+            Name   = 'Web-Server'
+        }
+
+        # Allow Write access to some section that normally don't have it.
+        xIisFeatureDelegation serverRuntime
+        {
+            Filter       = '/system.webserver/serverRuntime'
+            OverrideMode = 'Allow'
+            Path         = 'MACHINE/WEBROOT/APPHOST'
+        }
+
+        xIisFeatureDelegation anonymousAuthentication
+        {
+            Filter       = '/system.webserver/security/authentication/anonymousAuthentication'
+            OverrideMode = 'Allow'
+            Path         = 'MACHINE/WEBROOT/APPHOST'
+        }
+
+        xIisFeatureDelegation sessionState
+        {
+            Filter       = '/system.web/sessionState'
+            OverrideMode = 'Allow'
+            Path         = 'MACHINE/WEBROOT/APPHOST'
+        }
+    }
+}
+
+.EXAMPLE 2
+
+This example will install the IIS Windows Feature and unlocks the IIS configuration
+sections specified by the Filter setting.  This example uses the IIS Module Path format
+for the 'Path' setting.
+
+configuration Example
+{
+    param
+    (
+        [Parameter()]
+        [string[]]
+        $NodeName = 'localhost'
+    )
+
+    Import-DscResource -Module xWebAdministration
+    Import-DscResource -Module PSDesiredStateConfiguration
+
+    Node $NodeName
+    {
+        # Install the IIS role
+        WindowsFeature IIS
+        {
+            Ensure = 'Present'
+            Name   = 'Web-Server'
+        }
+
+        # Allow Write access to some section that normally don't have it.
+        xIisFeatureDelegation serverRuntime
+        {
+            Filter       = '/system.webserver/serverRuntime'
+            OverrideMode = 'Allow'
+            Path         = 'IIS:\Sites\Default Web Site'
+        }
+
+        xIisFeatureDelegation anonymousAuthentication
+        {
+            Filter       = '/system.webserver/security/authentication/anonymousAuthentication'
+            OverrideMode = 'Allow'
+            Path         = 'IIS:\Sites\Default Web Site'
+        }
+
+        xIisFeatureDelegation sessionState
+        {
+            Filter       = '/system.web/sessionState'
+            OverrideMode = 'Allow'
+            Path         = 'IIS:\Sites\Default Web Site'
+        }
+    }
+}
+

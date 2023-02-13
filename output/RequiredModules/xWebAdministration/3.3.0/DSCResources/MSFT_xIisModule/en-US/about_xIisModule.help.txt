@@ -1,0 +1,48 @@
+.NAME
+    xIisModule
+
+.DESCRIPTION
+    The xIISModule DSC resource is used to...
+
+    ## Requirements
+
+    * Target machine must be running Windows Server 2012 R2 or later.
+
+    ## Known issues
+
+    All issues are not listed here, see https://github.com/dsccommunity/xWebAdministration/issues?q=is%3Aissue+is%3Aopen+in%3Atitle+xIISModule.
+
+.PARAMETER Path
+    Key - String
+    The path to the module, usually a dll, to be added to IIS.
+
+.PARAMETER Name
+    Required - String
+    The logical name of the module to add to IIS.
+
+.PARAMETER RequestPath
+    Required - String
+    The allowed request Path example: *.php
+
+.PARAMETER Verb
+    Required - StringArray
+    The supported verbs for the module.
+
+.PARAMETER SiteName
+    Write - String
+    The IIS Site to register the module.
+
+.PARAMETER Ensure
+    Write - String
+    Allowed values: Present, Absent
+    Should the module be present or absent.
+
+.PARAMETER ModuleType
+    Write - String
+    Allowed values: FastCgiModule
+    The type of the module.
+
+.PARAMETER EndPointSetup
+    Read - Boolean
+    The End Point is setup.  Such as a Fast Cgi endpoint.
+

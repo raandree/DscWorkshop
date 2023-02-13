@@ -1,0 +1,71 @@
+.NAME
+    xWebSiteDefaults
+
+.DESCRIPTION
+    The xWebSiteDefaults DSC resource is used to...
+
+    ## Requirements
+
+    * Target machine must be running Windows Server 2012 R2 or later.
+
+    ## Known issues
+
+    All issues are not listed here, see https://github.com/dsccommunity/xWebAdministration/issues?q=is%3Aissue+is%3Aopen+in%3Atitle+xWebSiteDefaults.
+
+.PARAMETER IsSingleInstance
+    Key - String
+    Allowed values: Yes
+    Specifies the resource is a single instance, the value must be 'Yes'
+
+.PARAMETER LogFormat
+    Write - String
+    Allowed values: W3C, IIS, NCSA, Custom
+    sites/siteDefaults/logFile/logFormat
+
+.PARAMETER LogDirectory
+    Write - String
+    sites/siteDefaults/logFile/directory
+
+.PARAMETER TraceLogDirectory
+    Write - String
+    sites/siteDefaults/traceFailedRequestsLogging/directory
+
+.PARAMETER DefaultApplicationPool
+    Write - String
+    sites/applicationDefaults/applicationPool
+
+.PARAMETER AllowSubDirConfig
+    Write - String
+    Allowed values: true, false
+    sites/virtualDirectoryDefaults/allowSubDirConfig
+
+.EXAMPLE 1
+
+An example of configuring the website default settings.
+This examples show how to use xWebSiteDefaults for configuring the website default settings.
+
+Configuration Sample_xWebSiteDefaults
+{
+    param
+    (
+        # Target nodes to apply the configuration
+        [string[]]$NodeName = 'localhost'
+    )
+
+    # Import the module that defines custom resources
+    Import-DscResource -Module xWebAdministration
+
+    Node $NodeName
+    {
+        xWebSiteDefaults SiteDefaults
+        {
+            IsSingleInstance       = 'Yes'
+            LogFormat              = 'IIS'
+            LogDirectory           = 'C:\inetpub\logs\LogFiles'
+            TraceLogDirectory      = 'C:\inetpub\logs\FailedReqLogFiles'
+            DefaultApplicationPool = 'DefaultAppPool'
+            AllowSubDirConfig      = 'true'
+        }
+    }
+}
+
