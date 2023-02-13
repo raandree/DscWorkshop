@@ -37,5 +37,11 @@
     "[markdown]": {
         "files.trimTrailingWhitespace": false,
         "files.encoding": "utf8"
-    }
+    },
+    "favorites.resources": [
+        {
+            "filePath": "output\\RSOP\\0.2.0-test\\DSCFile01.yml",
+            "group": "Default"
+        }
+    ]
 }
