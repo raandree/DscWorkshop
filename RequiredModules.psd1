@@ -15,7 +15,7 @@
     Plaster                      = '1.1.3'
     ModuleBuilder                = '2.0.0'
     ChangelogManagement          = '2.1.4'
-    Sampler                      = '0.115.0'
+    #Sampler                      = '0.115.0'
     'Sampler.GitHubTasks'        = '0.3.5-preview0002'
     PowerShellForGitHub          = '0.16.1'
     'Sampler.DscPipeline'        = '0.2.0-preview0003'
