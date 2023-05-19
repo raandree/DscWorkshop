@@ -234,6 +234,8 @@ function Invoke-InvokeCommandAction
         $Node
     )
 
+    Write-Error "InvokeCommand Error"
+
     $throwOnError = [bool]$datum.__Definition.DatumHandlersThrowOnError
 
     if ($InputObject -is [array])

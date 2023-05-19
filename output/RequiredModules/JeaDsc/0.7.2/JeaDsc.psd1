@@ -31,9 +31,9 @@
 
     AliasesToExport      = @()
 
-    DscResourcesToExport = @(
-        'JeaSessionConfiguration'
-        'JeaRoleCapabilities'
+    DscResourcesToExport = @('*'
+        #'JeaSessionConfiguration'
+        #'JeaRoleCapabilities'
     )
 
     PrivateData          = @{
@@ -62,6 +62,3 @@
 
     }
 }
-
-
-

@@ -1,12 +1,12 @@
-NodeName: '[x={ $Node.Name }=]'
-Environment: '[x={ $File.Directory.BaseName } =]'
+NodeName: DSCFile01
+Environment: Dev
 Role: FileServer
-Description: '[x= "$($Node.Role) in $($Node.Environment)" =]'
+Description: DSCFile01
 Location: Frankfurt
 Baseline: Server
 
 ComputerSettings:
-  Name: '[x={ $Node.NodeName }=]'
+  Name: DSCFile01
   Description: '[x= "$($Node.Role) in $($Node.Environment)" =]'
 
 NetworkIpConfiguration:
@@ -25,7 +25,7 @@ PSDscAllowDomainUser: True
 LcmConfig:
   ConfigurationRepositoryWeb:
     Server:
-      ConfigurationNames: '[x={ $Node.NodeName }=]'
+      ConfigurationNames: DSCFile01 #'[x={ $Node.NodeName }=]'
 
 DscTagging:
   Layers:

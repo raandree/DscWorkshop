@@ -14,7 +14,7 @@ DatumHandlers:
       #Certificate: 5E8BC1E3ECBAFD00A3DBBF81C098914DD2039432
       PlainTextPassword: SomeSecret2
   Datum.InvokeCommand::InvokeCommand:
-    SkipDuringLoad: true
+    #SkipDuringLoad: true
 
 DscLocalConfigurationManagerKeyName: LcmConfig
 

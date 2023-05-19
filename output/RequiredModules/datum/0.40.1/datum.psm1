@@ -1433,7 +1433,7 @@ function Merge-Datum
     Write-Verbose -Message "   Merge Strategy: @$($strategy | ConvertTo-Json)"
 
     $result = $null
-    if ($ReferenceDatum -is [array])
+    if ($ReferenceDatum -is [array] -and $ReferenceDatum.Count -gt 0)
     {
         $datumItems = @()
         foreach ($item in $ReferenceDatum)
@@ -1457,7 +1457,29 @@ function Merge-Datum
         }
     }
 
-    if ($DifferenceDatum -is [array])
+    if ($DifferenceDatum -is [array] -and $DifferenceDatum.Count -gt 0)
+    {
+        $datumItems = @()
+        foreach ($item in $DifferenceDatum)
+        {
+            if (Invoke-DatumHandler -InputObject $item -DatumHandlers $Datum.__Definition.DatumHandlers -Result ([ref]$result))
+            {
+                $datumItems += ConvertTo-Datum -InputObject $result -DatumHandlers $Datum.__Definition.DatumHandlers
+            }
+            else
+            {
+                $datumItems += $item
+            }
+        }
+        $DifferenceDatum = $datumItems
+    }
+    else
+    {
+        if (Invoke-DatumHandler -InputObject $DifferenceDatum -DatumHandlers $Datum.__Definition.DatumHandlers -Result ([ref]$result))
+        {
+            $DifferenceDatum = ConvertTo-Datum -InputObject $result -DatumHandlers $Datum.__Definition.DatumHandlers
+        }
+    }
     {
         $datumItems = @()
         foreach ($item in $DifferenceDatum)

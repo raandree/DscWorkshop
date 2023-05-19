@@ -82,6 +82,9 @@ function Invoke-ProtectedDatumAction {
         [String]
         $Footer = ']'
     )
+
+    Write-Error "ProtectedData Error"
+
     Write-Debug "Decrypting Datum using ProtectedData"
     $params = @{}
     foreach ($ParamKey in $PSBoundParameters.keys) {
