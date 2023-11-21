@@ -1,4 +1,8 @@
-DscTagging:
-  Environment: '[x={ $Node.Environment } =]'
-  Layers:
-    - '[x={ Get-DatumSourceFile -Path $File } =]'
+#DscTagging:
+#  Environment: '[x={ $Node.Environment } =]'
+#  Layers:
+#    - '[x={ Get-DatumSourceFile -Path $File } =]'
+
+SomeHashtable:
+  City: Frankfurt
+  --T1:

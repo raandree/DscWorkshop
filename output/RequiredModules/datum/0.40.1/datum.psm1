@@ -837,8 +837,14 @@ function Merge-Hashtable
     }
     Write-Debug -Message "`t  Knockout Prefix Matcher: $knockoutPrefixMatcher"
 
-    $knockedOutKeys = $ReferenceHashtable.Keys.Where{ $_ -match $knockoutPrefixMatcher }.ForEach{ $_ -replace $knockoutPrefixMatcher }
+    $knockedOutKeys = $ReferenceHashtable.Keys.Where{
+        $_ -match $knockoutPrefixMatcher
+    }.ForEach{
+        $_
+        $_ -replace $knockoutPrefixMatcher
+    }
     Write-Debug -Message "`t  Knockedout Keys: [$($knockedOutKeys -join ', ')] from reference Hashtable Keys [$($ReferenceHashtable.keys -join ', ')]"
+
 
     foreach ($currentKey in $DifferenceHashtable.keys)
     {
@@ -846,15 +852,16 @@ function Merge-Hashtable
         if ($currentKey -in $knockedOutKeys)
         {
             Write-Debug -Message "`t`tThe Key $currentkey is knocked out from the reference Hashtable."
+            $ReferenceDatum.Remove("--$currentKey")
         }
         elseif ($currentKey -match $knockoutPrefixMatcher -and -not $ReferenceHashtable.Contains(($currentKey -replace $knockoutPrefixMatcher)))
         {
             # it's a knockout coming from a lower level key, it should only apply down from here
-            Write-Debug -Message "`t`tKnockout prefix found for $currentKey in Difference hashtable, and key not set in Reference hashtable"
+            Write-Debug -Message "`t`tKnockout prefix found for '$currentKey' in Difference hashtable, and key not set in Reference hashtable"
             if (-not $ReferenceHashtable.Contains($currentKey))
             {
-                Write-Debug -Message "`t`t..adding knockout prefixed key for $curretKey to block further merges"
-                $clonedReference.Add($currentKey, $null)
+                Write-Debug -Message "`t`t...adding knockout prefixed key for '$curretKey' to block further merges"
+                #$clonedReference.Add($currentKey, $null)
             }
         }
         elseif (-not $ReferenceHashtable.Contains($currentKey) )

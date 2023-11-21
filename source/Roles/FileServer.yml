@@ -4,6 +4,7 @@ Configurations:
   - WindowsFeatures
   - SomeValues
   - HashTables
+  - Car
 
 WindowsFeatures:
   Names:
@@ -45,21 +46,26 @@ RegistryValues:
       Force: true
   DependsOn: '[FilesAndFolders]FilesAndFolders'
 
-SecurityBaseline:
-  Role: FileServer
-  DependsOn: '[RegistryValues]RegistryValues'
-
-DscTagging:
-  Layers:
-    - '[x={ Get-DatumSourceFile -Path $File } =]'
-
+#SecurityBaseline:
+#  Role: FileServer
+#  DependsOn: '[RegistryValues]RegistryValues'
+#
+#DscTagging:
+#  Layers:
+#    - '[x={ Get-DatumSourceFile -Path $File } =]'
 
 HashTables:
   Items:
     - Key1: h3
       Key2: 3
-      Key3: v3
+      Key3: v
     - Key1: h4
       Key2: 4
     - Key1: h5
       Key2: 5
+
+Car:
+  Brand: VW
+  Model: Golf
+  Engine:
+    Volume: 2.0

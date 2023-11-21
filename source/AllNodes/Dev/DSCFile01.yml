@@ -3,27 +3,27 @@ Environment: '[x={ $File.Directory.BaseName } =]'
 Role: FileServer
 Description: '[x= "$($Node.Role) in $($Node.Environment)" =]'
 
-ComputerSettings:
-  Name: '[x={ $Node.NodeName }=]'
-  Description: '[x= "$($Node.Role) in $($Node.Environment)" =]'
-
-PSDscAllowPlainTextPassword: True
-PSDscAllowDomainUser: True
-
-LcmConfig:
-  ConfigurationRepositoryWeb:
-    Server:
-      ConfigurationNames: '[x={ $Node.NodeName }=]'
-
-DscTagging:
-  Layers:
-    - '[x={ Get-DatumSourceFile -Path $File } =]'
+#ComputerSettings:
+#  Name: '[x={ $Node.NodeName }=]'
+#  Description: '[x= "$($Node.Role) in $($Node.Environment)" =]'
+#
+#PSDscAllowPlainTextPassword: True
+#PSDscAllowDomainUser: True
+#
+#LcmConfig:
+#  ConfigurationRepositoryWeb:
+#    Server:
+#      ConfigurationNames: '[x={ $Node.NodeName }=]'
+#
+#DscTagging:
+#  Layers:
+#    - '[x={ Get-DatumSourceFile -Path $File } =]'
 
 FilesAndFolders:
   Items:
     - DestinationPath: Z:\DoesNotWork
       Type: Directory
-    - DestinationPath: --C:\Test
+    - DestinationPath: C:\Test
       Type: Directory
 
 HashTables:
@@ -32,7 +32,7 @@ HashTables:
       Key2: 1
     - Key1: h2
       Key2: 2
-    - Key1: h3
+    - Key1: --h3
       Key2: 3
       Key3: v3
 
@@ -43,7 +43,13 @@ WindowsFeatures:
     - v3
 
 SomeValues:
-  --Values:
+  Values:
     - v3
     #- v4
     #- --v5
+
+Car:
+  --Model:
+  Color: Red
+  Engine:
+    Type: Gasoline

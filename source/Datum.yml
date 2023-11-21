@@ -69,3 +69,8 @@ lookup_options:
     merge_hash: deep
   LcmConfig\ConfigurationRepositoryWeb\Server:
     merge_hash: deep
+
+  Car:
+    merge_hash: deep
+    merge_options:
+      knockout_prefix: --
