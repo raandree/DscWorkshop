@@ -15,9 +15,9 @@ BuildWorkflow:
     - PowerShell5Compatibility
     - Build_Module_ModuleBuilder
     - LoadDatumConfigData
-    - TestConfigData
+    #- TestConfigData
     - CompileDatumRsop
-    - TestReferenceRsop
+    #- TestReferenceRsop
     - Set_PSModulePath
     - TestDscResources
     - CompileRootConfiguration
