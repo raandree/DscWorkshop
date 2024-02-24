@@ -9,3 +9,4 @@ output/RequiredModules/*
 !output/RequiredModules/ProtectedData
 !output/RequiredModules/FileSystemDsc
 !output/RequiredModules/DscConfig.Demo
+!output/RequiredModules/DscBuildHelpers
