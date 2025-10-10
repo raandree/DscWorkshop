@@ -44,7 +44,7 @@
     'Az.Compute'                 = '9.0.0'
 
     # Composites
-    #'DscConfig.Demo'             = '0.8.3'
+    'DscConfig.Demo'             = '0.8.4-preview0001'
 
     #DSC Resources
     xPSDesiredStateConfiguration = '9.2.1'
@@ -52,7 +52,7 @@
     NetworkingDsc                = '9.0.0'
     JeaDsc                       = '4.0.0-preview0005'
     WebAdministrationDsc         = '4.2.1'
-    #FileSystemDsc                = '1.1.1'
+    FileSystemDsc                = '1.2.0-preview0004'
     SecurityPolicyDsc            = '2.10.0.0'
     xDscDiagnostics              = '2.8.0'
 
