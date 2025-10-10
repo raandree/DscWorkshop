@@ -7,3 +7,4 @@ output/RequiredModules/*
 
 !output/RequiredModules/FileSystemDsc
 !output/RequiredModules/DscConfig.Demo
+!output/RequiredModules/datum
