@@ -1,8 +1,8 @@
 NodeName: '[x={ $Node.Name }=]'
 Environment: '[x={ $File.Directory.BaseName } =]'
-Role: FileServer
+Role: WebServer
 Description: '[x= "$($Node.Role) in $($Node.Environment)" =]'
-Location: Frankfurt
+Location: Singapore
 Baseline: Server
 
 ComputerSettings:
@@ -12,7 +12,7 @@ ComputerSettings:
 NetworkIpConfiguration:
   Interfaces:
     - InterfaceAlias: DscWorkshop 0
-      IpAddress: 192.168.111.100
+      IpAddress: 192.168.111.101
 
 PSDscAllowPlainTextPassword: True
 PSDscAllowDomainUser: True
@@ -27,8 +27,3 @@ DscTagging:
     - '[x={ Get-DatumSourceFile -Path $File } =]'
   NodeVersion: '[x={ $datum.Baselines.DscLcm.DscTagging.Version } =]'
   NodeRole: '[x={ $Node.Role } =]'
-
-FileSystemObjects:
-  Items:
-    - DestinationPath: Z:\DoesNotWork
-      Type: Directory
