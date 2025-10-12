@@ -23,6 +23,14 @@
         {
             "type": "PowerShell",
             "request": "launch",
+            "name": "Launch RSOP",
+            "script": "${workspaceRoot}/Build.ps1",
+            "args": ["-Task RSOP"],
+            "cwd": "${workspaceRoot}"
+        },
+        {
+            "type": "PowerShell",
+            "request": "launch",
             "name": "PowerShell Launch Current File",
             "script": "${file}",
             "args": [],
