@@ -15,4 +15,4 @@ NetworkIpConfiguration:
       IpAddress: 10.10.10.10
 
 PSDscAllowPlainTextPassword: True
-PSDscAllowDomainUser: true
+PSDscAllowDomainUser: True
