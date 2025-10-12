@@ -1,0 +1,121 @@
+PSDscAllowPlainTextPassword: true
+Environment: Dev
+DscTagging:
+  Layers:
+  - AllNodes\Dev\DSCFile01
+  - Environment\Dev
+  - Locations\Frankfurt
+  - Roles\FileServer
+  - Baselines\Security
+  - Baselines\Server
+  - Baselines\DscLcm
+  NodeVersion: 0.3.0
+  Version: 0.3.0
+  Environment: Dev
+  NodeRole: FileServer
+Role: FileServer
+Location: Frankfurt
+ComputerSettings:
+  Description: FileServer in Dev
+  Credential: install@contoso:*********
+  Name: DSCFile01
+  TimeZone: Greenwich Standard Time
+  JoinOU: CN=Computers,dc=contoso,dc=com
+  DomainName: contoso.com
+NodeName: DSCFile01
+FileSystemObjects:
+  Items:
+  - Type: Directory
+    DestinationPath: Z:\DoesNotWork
+  - Type: Directory
+    DestinationPath: C:\Test\Dev-Environment
+  - Type: Directory
+    DestinationPath: C:\Test\Frankfurt
+  - Type: Directory
+    DestinationPath: C:\Test
+  - DependsOn: '[FileSystemObject]FileSystemObject_C__Test'
+    Contents: Some test data
+    DestinationPath: C:\Test\Test1File1.txt
+    Type: File
+  - DependsOn: '[FileSystemObject]FileSystemObject_C__Test'
+    Contents: Some test data
+    DestinationPath: C:\Test\Test1File2.txt
+    Type: File
+  - SourcePath: C:\Windows\Media
+    DestinationPath: C:\GpoBackup
+    Type: Directory
+RegistryValues:
+  DependsOn: '[FileSystemObjects]FileSystemObjects'
+  Values:
+  - ValueData: 545325055
+    Force: true
+    Ensure: Present
+    ValueType: DWORD
+    ValueName: DBFlag
+    Key: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters
+  - ValueData: pool.ntp.org,0x9
+    Force: true
+    Ensure: Present
+    ValueType: String
+    ValueName: NtpServer
+    Key: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\W32Time\Parameters
+Name: DSCFile01
+WindowsFeatures:
+  Names:
+  - File-Services
+  - -Telnet-Client
+SecurityBase:
+  Role: Baseline
+  DependsOn: '[WindowsFeatures]WindowsFeatures'
+PSDscAllowDomainUser: true
+LcmConfig:
+  Settings:
+    RebootNodeIfNeeded: true
+    RefreshFrequencyMins: 30
+    ActionAfterReboot: ContinueConfiguration
+    AllowModuleOverwrite: true
+    RefreshMode: Pull
+    ConfigurationModeFrequencyMins: 30
+    ConfigurationMode: ApplyAndMonitor
+  ReportServerWeb:
+    ServerURL: https://dscpull01.contoso.com:8080/PSDSCPullServer.svc
+    RegistrationKey: ec717ee9-b343-49ee-98a2-26e53939eecf
+  ConfigurationRepositoryWeb:
+    Server:
+      ServerURL: https://dscpull01.contoso.com:8080/PSDSCPullServer.svc
+      ConfigurationNames: DSCFile01
+      RegistrationKey: ec717ee9-b343-49ee-98a2-26e53939eecf
+Baseline: Server
+WindowsEventLogs:
+  DependsOn: '[ComputerSettings]ComputerSettings'
+  Logs:
+  - IsEnabled: true
+    MaximumSizeInBytes: 20971520
+    LogName: System
+    LogMode: Circular
+  - IsEnabled: true
+    MaximumSizeInBytes: 20971520
+    LogName: Application
+    LogMode: Circular
+  - IsEnabled: true
+    MaximumSizeInBytes: 134217728
+    LogName: Security
+    LogMode: Circular
+NetworkIpConfiguration:
+  Interfaces:
+    IpAddress: 192.168.111.100
+    DnsServer: 192.168.111.10
+    Prefix: 24
+    Gateway: 192.168.111.50
+    DisableNetbios: true
+    InterfaceAlias: DscWorkshop 0
+Description: FileServer in Dev
+Configurations:
+- FileSystemObjects
+- RegistryValues
+- SecurityBase
+- WindowsFeatures
+- ComputerSettings
+- NetworkIpConfiguration
+- WindowsEventLogs
+- DscTagging

@@ -1,0 +1,156 @@
+WindowsFeatures:
+  Names:
+  - +Web-Server
+  - -WoW64-Support
+  - -Telnet-Client
+PSDscAllowDomainUser: true
+LcmConfig:
+  Settings:
+    ConfigurationModeFrequencyMins: 30
+    RefreshFrequencyMins: 30
+    RebootNodeIfNeeded: true
+    ConfigurationMode: ApplyAndMonitor
+    ActionAfterReboot: ContinueConfiguration
+    AllowModuleOverwrite: true
+    RefreshMode: Pull
+  ReportServerWeb:
+    RegistrationKey: ec717ee9-b343-49ee-98a2-26e53939eecf
+    ServerURL: https://dscpull01.contoso.com:8080/PSDSCPullServer.svc
+  ConfigurationRepositoryWeb:
+    Server:
+      ConfigurationNames: DSCWeb01
+      RegistrationKey: ec717ee9-b343-49ee-98a2-26e53939eecf
+      ServerURL: https://dscpull01.contoso.com:8080/PSDSCPullServer.svc
+DscTagging:
+  Version: 0.3.0
+  Layers:
+  - AllNodes\Dev\DSCWeb01
+  - Environment\Dev
+  - Locations\Singapore
+  - Roles\WebServer
+  - Baselines\Security
+  - Baselines\Server
+  - Baselines\DscLcm
+  NodeRole: WebServer
+  Environment: Dev
+  NodeVersion: 0.3.0
+WebApplicationPools:
+  Items:
+  - State: Started
+    IdentityType: ApplicationPoolIdentity
+    Ensure: Present
+    Name: TestAppPool1
+  - State: Started
+    IdentityType: ApplicationPoolIdentity
+    Ensure: Present
+    DependsOn: '[WebAppPool]TestAppPool1'
+    Name: TestAppPool2
+  DependsOn:
+  - '[FileSystemObjects]FileSystemObjects'
+  - '[WindowsFeatures]WindowsFeatures'
+Baseline: Server
+Name: DSCWeb01
+ComputerSettings:
+  Name: DSCWeb01
+  TimeZone: Greenwich Standard Time
+  Credential: install@contoso:*********
+  JoinOU: CN=Computers,dc=contoso,dc=com
+  Description: WebServer in Dev
+  DomainName: contoso.com
+WindowsServices:
+  Services:
+    DisplayName: Dummy Service on Web Servers
+    StartupType: Automatic
+    Path: C:\DummyService.exe
+    Name: FileDummy
+  DependsOn: '[RegistryValues]RegistryValues'
+FileSystemObjects:
+  Items:
+  - DestinationPath: C:\Test\Dev-Environment
+    Type: Directory
+  - DestinationPath: C:\Test\Singapore
+    Type: Directory
+  - DestinationPath: C:\Inetpub\TestApp1
+    Type: Directory
+  - DestinationPath: C:\Inetpub\TestApp2
+    Type: Directory
+  - Contents: This is TestApp1
+    DestinationPath: C:\Inetpub\TestApp1\default.html
+    DependsOn: '[FileSystemObject]FileSystemObject_C__Inetpub_TestApp1'
+    Type: File
+  - Contents: This is TestApp2
+    DestinationPath: C:\Inetpub\TestApp2\default.html
+    DependsOn: '[FileSystemObject]FileSystemObject_C__Inetpub_TestApp2'
+    Type: File
+PSDscAllowPlainTextPassword: true
+WindowsEventLogs:
+  Logs:
+  - IsEnabled: true
+    LogMode: Circular
+    LogName: System
+    MaximumSizeInBytes: 20971520
+  - IsEnabled: true
+    LogMode: Circular
+    LogName: Application
+    MaximumSizeInBytes: 20971520
+  - IsEnabled: true
+    LogMode: Circular
+    LogName: Security
+    MaximumSizeInBytes: 134217728
+  DependsOn: '[ComputerSettings]ComputerSettings'
+NodeName: DSCWeb01
+NetworkIpConfiguration:
+  Interfaces:
+    Gateway: 192.168.111.50
+    DisableNetbios: true
+    InterfaceAlias: DscWorkshop 0
+    Prefix: 24
+    IpAddress: 192.168.111.101
+    DnsServer: 192.168.111.10
+Role: WebServer
+Location: Singapore
+Configurations:
+- FileSystemObjects
+- WindowsServices
+- RegistryValues
+- WebApplicationPools
+- WebApplications
+- SecurityBase
+- WindowsFeatures
+- ComputerSettings
+- NetworkIpConfiguration
+- WindowsEventLogs
+- DscTagging
+RegistryValues:
+  DependsOn: '[WebApplications]WebApplications'
+  Values:
+  - ValueName: DBFlag
+    ValueData: 545325055
+    Force: true
+    ValueType: DWORD
+    Key: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters
+    Ensure: Present
+  - ValueName: NtpServer
+    ValueData: time.windows.com,0x9;
+    Force: true
+    ValueType: String
+    Key: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\W32Time\Parameters
+    Ensure: Present
+Description: 'WebServer in '
+WebApplications:
+  Items:
+  - Website: Default Web Site
+    WebAppPool: TestAppPool1
+    Ensure: Present
+    PhysicalPath: C:\Inetpub\TestApp1
+    Name: TestApp1
+  - PhysicalPath: C:\Inetpub\TestApp2
+    Name: TestApp2
+    WebAppPool: TestAppPool2
+    DependsOn: '[WebApplication]webapp_TestApp1'
+    Website: Default Web Site
+    Ensure: Present
+  DependsOn: '[WebApplicationPools]WebApplicationPools'
+SecurityBase:
+  Role: WebServer
+Environment: Dev
