@@ -1,11 +1,11 @@
 ResolutionPrecedence:
   - AllNodes\$($Node.Environment)\$($Node.NodeName)
-  - Environment\$($Node.Environment)
-  - Locations\$($Node.Location)
-  - Roles\$($Node.Role)
-  - Baselines\Security
-  - Baselines\$($Node.Baseline)
-  - Baselines\DscLcm
+  #- Environment\$($Node.Environment)
+  #- Locations\$($Node.Location)
+  #- Roles\$($Node.Role)
+  #- Baselines\Security
+  #- Baselines\$($Node.Baseline)
+  #- Baselines\DscLcm
 
 DatumHandlersThrowOnError: true
 DatumHandlers:

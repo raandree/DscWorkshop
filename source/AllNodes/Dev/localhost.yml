@@ -43,11 +43,21 @@ ChocolateyPackages:
     Version: 2.5.1
     ChocoTempDir: C:\ChocoTemp
     InstallationDirectory: C:\ProgramData\Chocolatey
-Sources:
-  - Name: Chocolatey
-    Ensure: Present
-    Source: https://chocolatey.org/api/v2
-    Priority: 0
-    Disabled: False
-    BypassProxy: False
-    SelfService: False
+
+  Sources:
+    - Name: Chocolatey
+      Ensure: Present
+      Source: https://chocolatey.org/api/v2
+      Priority: 0
+      Disabled: False
+      BypassProxy: True
+      SelfService: True
+
+  Packages:
+    - Name: notepadplusplus
+      Ensure: Present
+      Version: Latest
+    - Name: winrar
+      Version: Latest
+      Rank: 100   # winrar is installed before notepadplusplus (with the default rank)
+      #ForceReboot: true
