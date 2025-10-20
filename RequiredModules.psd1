@@ -44,7 +44,7 @@
     'Az.Compute'                 = '10.4.0'
 
     # Composites
-    #'DscConfig.Demo'             = '0.8.3'
+    'DscConfig.Demo'             = '0.8.4-preview0001'
 
     #DSC Resources
     xPSDesiredStateConfiguration = '9.2.1'
