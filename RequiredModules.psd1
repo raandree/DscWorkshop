@@ -55,5 +55,6 @@
     #FileSystemDsc                = '1.1.1'
     SecurityPolicyDsc            = '2.10.0.0'
     xDscDiagnostics              = '2.8.0'
+    chocolatey                   = 'latest'
 
 }
