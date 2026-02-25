@@ -22,6 +22,8 @@ default_lookup_options: MostSpecific
 lookup_options:
   Configurations:
     merge_basetype_array: Unique
+    merge_options:
+      knockout_prefix: '--'
 
   Baseline:
     merge_hash: deep
@@ -36,22 +38,27 @@ lookup_options:
 
   WindowsFeatures\Names:
     merge_basetype_array: Unique
+    merge_options:
+      knockout_prefix: '--'
 
   FileSystemObjects:
     merge_hash: deep
   FileSystemObjects\Items:
     merge_hash_array: UniqueKeyValTuples
     merge_options:
+      knockout_prefix: '--'
       tuple_keys:
         - DestinationPath
 
   RegistryValues:
     merge_hash: deep
   RegistryValues\Values:
-    merge_hash_array: UniqueKeyValTuples
+    merge_hash_array: DeepTuple
     merge_options:
+      knockout_prefix: '--'
       tuple_keys:
         - Key
+        - ValueName
 
   NetworkIpConfiguration:
     merge_hash: deep

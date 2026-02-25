@@ -1,0 +1,68 @@
+# ============================================================================
+# KnockoutTest Role
+# ============================================================================
+# This role defines base configuration data with items that will be selectively
+# knocked out at the node level to demonstrate Datum's knockout prefix feature.
+#
+# The knockout prefix (default: --) removes items from merged results.
+# See: https://github.com/gaelcolas/datum#knockout-prefix
+# ============================================================================
+
+Configurations:
+  - WindowsFeatures
+  - FileSystemObjects
+  - RegistryValues
+
+# WindowsFeatures defined at the role level.
+# Some features will be knocked out at the node level using
+# Datum's knockout prefix (--).
+WindowsFeatures:
+  Names:
+    - RSAT-AD-PowerShell
+    - SNMP-Service
+    - Telnet-Client
+    - Windows-Server-Backup
+
+# FileSystemObjects defined at the role level.
+# Some items will be knocked out at the node level
+# using the knockout prefix on the tuple key (DestinationPath).
+FileSystemObjects:
+  Items:
+    - DestinationPath: C:\KnockoutTest
+      Type: Directory
+    - DestinationPath: C:\KnockoutTest\KeepThisFile.txt
+      Type: File
+      Contents: This file should survive the knockout merge
+      DependsOn: '[FileSystemObject]FileSystemObject_C__KnockoutTest'
+    - DestinationPath: C:\KnockoutTest\RemoveThisFile.txt
+      Type: File
+      Contents: This file should be removed by the knockout at node level
+      DependsOn: '[FileSystemObject]FileSystemObject_C__KnockoutTest'
+
+# RegistryValues defined at the role level.
+# One entry will be knocked out at the node level
+# using the knockout prefix on the tuple key (Key).
+RegistryValues:
+  Values:
+    - Key: HKEY_LOCAL_MACHINE\SOFTWARE\KnockoutTest
+      ValueName: KeepThisValue
+      ValueData: This value should remain
+      ValueType: String
+      Ensure: Present
+      Force: true
+    - Key: HKEY_LOCAL_MACHINE\SOFTWARE\KnockoutTest
+      ValueName: RemoveThisValue
+      ValueData: This value should be removed by knockout based on the Key tuple key
+      ValueType: String
+      Ensure: Present
+      Force: true
+    - Key: HKEY_LOCAL_MACHINE\SOFTWARE\KnockoutTest
+      ValueName: RemoveForce
+      ValueData: The force flag should be removed by knockout
+      ValueType: String
+      Ensure: Present
+      Force: true
+
+DscTagging:
+  Layers:
+    - '[x={ Get-DatumSourceFile -Path $File } =]'

@@ -26,7 +26,7 @@
     Datum                        = '0.41.0'
     ProtectedData                = '5.0.0'
     'Datum.ProtectedData'        = '0.0.1'
-    'Datum.InvokeCommand'        = '0.3.0'
+    'Datum.InvokeCommand'        = '0.4.1'
     Configuration                = '1.6.0'
     Metadata                     = '1.5.7'
     xDscResourceDesigner         = '1.13.0.0'

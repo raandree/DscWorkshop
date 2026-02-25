@@ -1,0 +1,105 @@
+# ============================================================================
+# DSCKnockout01 - Knockout Prefix Test Node
+# ============================================================================
+# This node demonstrates Datum's knockout prefix feature (default: --).
+# It uses the KnockoutTest role which defines base data, then selectively
+# removes items from merged results using the knockout prefix.
+#
+# Three knockout types are demonstrated:
+#   1. Base-type array knockout  (WindowsFeatures\Names)
+#   2. Hash array knockout       (FileSystemObjects\Items, RegistryValues\Values)
+#   3. Configuration knockout    (Configurations)
+#
+# See: https://github.com/gaelcolas/datum#knockout-prefix
+# ============================================================================
+
+NodeName: '[x={ $Node.Name }=]'
+Environment: '[x={ $File.Directory.BaseName } =]'
+Role: KnockoutTest
+Description: '[x= "Knockout test - $($Node.Role) in $($Node.Environment)" =]'
+Location: Frankfurt
+Baseline: Server
+
+ComputerSettings:
+  Name: '[x={ $Node.NodeName }=]'
+  Description: '[x= "Knockout test - $($Node.Role) in $($Node.Environment)" =]'
+
+NetworkIpConfiguration:
+  Interfaces:
+    - InterfaceAlias: DscWorkshop 0
+      IpAddress: 127.0.0.4
+      Gateway: 127.0.0.4
+
+PSDscAllowPlainTextPassword: true
+PSDscAllowDomainUser: true
+
+LcmConfig:
+  ConfigurationRepositoryWeb:
+    Server:
+      ConfigurationNames: '[x={ $Node.NodeName }=]'
+
+# ============================================================================
+# KNOCKOUT EXAMPLES
+# ============================================================================
+
+# --- 1. Configuration Knockout ---
+# The Configurations list is merged using merge_basetype_array: Unique.
+# The Server baseline adds WindowsEventLogs. This node knocks it out.
+# Expected: WindowsEventLogs will NOT appear in the final Configurations list.
+Configurations:
+  - --WindowsEventLogs
+
+# --- 2. Base-type Array Knockout (WindowsFeatures\Names) ---
+# The KnockoutTest role defines: RSAT-AD-PowerShell, SNMP-Service,
+#   Telnet-Client, Windows-Server-Backup
+# The Security baseline adds: -Telnet-Client (DSC ensure-absent convention)
+#
+# This node knocks out 'Telnet-Client' and 'Windows-Server-Backup' from
+# the merged array. The '--' prefix causes both the knockout entry and
+# the matching original to be removed from the result.
+#
+# Expected result after merge: RSAT-AD-PowerShell, SNMP-Service remain.
+#   Note: '-Telnet-Client' from Security baseline is a DSC convention
+#   (Ensure=Absent) and is a DIFFERENT string; it is NOT affected by
+#   knocking out 'Telnet-Client'.
+WindowsFeatures:
+  Names:
+    - --Telnet-Client
+    - --Windows-Server-Backup
+
+# --- 3. Hash Array Knockout (FileSystemObjects\Items) ---
+# FileSystemObjects\Items uses merge_hash_array: UniqueKeyValTuples
+#   with tuple_keys: [DestinationPath]
+#
+# The KnockoutTest role defines three items. This node knocks out
+# the item with DestinationPath 'C:\KnockoutTest\RemoveThisFile.txt'
+# by prefixing the tuple KEY NAME with '--' (not the value).
+#
+# Expected result: Only C:\KnockoutTest and C:\KnockoutTest\KeepThisFile.txt
+#   remain from the role, plus items from other layers (Location, Environment).
+FileSystemObjects:
+  Items:
+    - --DestinationPath: C:\KnockoutTest\RemoveThisFile.txt
+
+# --- 4. Hash Array Knockout (RegistryValues\Values) ---
+# RegistryValues\Values uses merge_hash_array: UniqueKeyValTuples
+#   with tuple_keys: [Key]
+#
+# The KnockoutTest role defines two registry entries. This node knocks out
+# the entry with Key 'HKLM\SOFTWARE\KnockoutTest'.
+#
+# Expected result: Only the HKLM\SOFTWARE\KnockoutTest entry remains from
+#   the role, plus entries from other layers (Environment).
+RegistryValues:
+  Values:
+    - --Key: HKEY_LOCAL_MACHINE\SOFTWARE\KnockoutTest
+      --ValueName: RemoveThisValue
+    - Key: HKEY_LOCAL_MACHINE\SOFTWARE\KnockoutTest
+      ValueName: RemoveForce
+      --Force: true
+
+DscTagging:
+  Layers:
+    - '[x={ Get-DatumSourceFile -Path $File } =]'
+  NodeVersion: '[x={ $datum.Baselines.DscLcm.DscTagging.Version } =]'
+  NodeRole: '[x={ $Node.Role } =]'
