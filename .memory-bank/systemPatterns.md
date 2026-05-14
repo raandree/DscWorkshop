@@ -23,7 +23,7 @@ Merge strategies (per `Datum.yml`): `MostSpecific` for scalars, deep-merge for h
 
 ## Build Pipeline (data flow)
 
-```
+```text
 YAML (source/)
    │
    ▼

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-DscWorkshop is the **reference implementation** of an enterprise-scale PowerShell DSC pipeline using the [Release Pipeline Model](./Exercises/TheReleasePipelineModel.pdf) (Greene & Murawski). It is both:
+DscWorkshop is the **reference implementation** of an enterprise-scale PowerShell DSC pipeline using the [Release Pipeline Model](../Exercises/TheReleasePipelineModel.pdf) (Greene & Murawski). It is both:
 
 1. A **production blueprint** — copy/fork to bootstrap a real DSC pipeline.
 2. An **educational resource** — progressive exercises (Task1–Task3) teach DSC, Datum, and the build pipeline.

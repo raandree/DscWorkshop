@@ -21,9 +21,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   hooks and the [CopilotAtelier](https://github.com/raandree/CopilotAtelier) conventions.
   Memory Bank files were audited and rewritten against current repo state; added
   `promptHistory.md`. Updated `README.md` reference accordingly.
-
-### Changed
-
 - Migrated from `DscConfig.Demo` to `CommonTasks` composite resource module.
   Updated `build.yaml`, `RequiredModules.psd1`, all Datum configuration data,
   and `DependsOn` references to match the resource names used by `CommonTasks`
